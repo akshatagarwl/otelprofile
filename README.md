@@ -116,6 +116,7 @@ Explicit fields win over the environment.
 | `Interval` | `OTEL_GO_X_PROFILES_INTERVAL` (`15s`) | 15s |
 | `CPUWindow` (length of each CPU profile) | `OTEL_GO_X_PROFILES_CPU_WINDOW` | 2 × `Interval` (30s). Each CPU profiler restart costs the Go runtime ~2 MB, so CPU profiles cover two intervals. Set it to `Interval` for 15s CPU resolution. |
 | `MutexProfileFraction`, `BlockProfileRate` | none | 5 and 10µs, only when the type is enabled; restored on `Stop` |
+| `RuntimeDeltas` (experimental) | `OTEL_GO_X_PROFILES_RUNTIME_DELTAS=true` | false. Compute heap, mutex and block deltas from runtime/pprof's public API instead of godeltaprof (which uses `go:linkname`); same data, see `docs/delta-without-linkname.md` for the cost. |
 | `DisableGCRuns` | none | false (a GC runs before a heap collection if none ran in the window, so in-use figures stay current) |
 | — | `OTEL_EXPORTER_OTLP_[PROFILES_]TIMEOUT`, `_COMPRESSION` (`gzip` or `none`), `_CERTIFICATE`, `_CLIENT_CERTIFICATE`, `_CLIENT_KEY` | 10s, none (the OTLP default) |
 | — | `OTEL_SDK_DISABLED=true` turns `Start` into a no-op | |

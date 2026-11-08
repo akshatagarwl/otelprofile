@@ -81,6 +81,11 @@ type Config struct {
 	// Zero means use the profile package defaults.
 	MutexProfileFraction int
 	BlockProfileRate     int
+	// RuntimeDeltas (experimental) computes heap, mutex and block deltas
+	// from runtime/pprof's public API instead of godeltaprof's go:linkname
+	// access. Env: OTEL_GO_X_PROFILES_RUNTIME_DELTAS=true. See
+	// profile.WithRuntimeDeltas.
+	RuntimeDeltas bool
 	// DisableGCRuns stops the forced GC before a heap collection when no GC
 	// ran during the window. By default the GC runs, which keeps in-use
 	// heap figures current.
@@ -151,6 +156,15 @@ func Start(cfg Config) (*Profiler, error) {
 		}
 	}
 
+	runtimeDeltas := cfg.RuntimeDeltas
+	if v, ok := os.LookupEnv("OTEL_GO_X_PROFILES_RUNTIME_DELTAS"); ok && !runtimeDeltas {
+		b, err := strconv.ParseBool(v)
+		if err != nil {
+			return nil, fmt.Errorf("otelprofile: OTEL_GO_X_PROFILES_RUNTIME_DELTAS=%q: want true or false", v)
+		}
+		runtimeDeltas = b
+	}
+
 	res, err := buildResource(cfg)
 	if err != nil {
 		return nil, err
@@ -180,6 +194,7 @@ func Start(cfg Config) (*Profiler, error) {
 		profile.WithInterval(interval),
 		profile.WithCPUWindow(cpuWindow),
 		profile.WithDisableGCRuns(cfg.DisableGCRuns),
+		profile.WithRuntimeDeltas(runtimeDeltas),
 		profile.WithErrorHandler(newLogHandler(logger).handle),
 	}
 	if cfg.MutexProfileFraction > 0 {

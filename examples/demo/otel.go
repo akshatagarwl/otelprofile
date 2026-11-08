@@ -56,6 +56,7 @@ func startOtelProfiler(svc string, ts []profile.Type) func() {
 		ProfileTypes:         ts,
 		Interval:             *interval,
 		CPUWindow:            *cpuWin,
+		RuntimeDeltas:        *rtDeltas,
 		MutexProfileFraction: *mutexF,
 		BlockProfileRate:     *blockR,
 	})

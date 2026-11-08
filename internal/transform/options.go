@@ -51,6 +51,16 @@ type Input struct {
 	Duration time.Duration
 	// Pprof is the encoded profile, optionally gzipped.
 	Pprof []byte
+	// Cumulative marks a profile whose counting sample types (alloc_objects,
+	// alloc_space, contentions, delay) are totals since the process started,
+	// as runtime/pprof writes them. The Encoder subtracts the previous
+	// cumulative profile with the same Name, per stack and label set, so the
+	// output holds deltas for the window. Snapshot types (inuse_*) pass
+	// through. See Encoder.CommitDeltas.
+	Cumulative bool
+	// Baseline marks the first cumulative profile of a Name: it only seeds
+	// the delta state and produces no samples.
+	Baseline bool
 }
 
 // Options tune the transform.

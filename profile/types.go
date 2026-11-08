@@ -107,6 +107,13 @@ type Record struct {
 	Start    time.Time
 	Duration time.Duration
 	Pprof    []byte
+	// Cumulative is set by WithRuntimeDeltas: Pprof is the runtime's
+	// cumulative profile (totals since process start for alloc_*,
+	// contentions and delay) and the exporter computes the window's deltas
+	// against the previous record of the same Type. Baseline marks the first
+	// such record, which only seeds that state.
+	Cumulative bool
+	Baseline   bool
 }
 
 // Exporter sends records somewhere. Export is called from the Profiler's own

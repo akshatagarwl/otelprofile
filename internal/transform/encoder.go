@@ -64,6 +64,13 @@ type Encoder struct {
 
 	gz gunzipper
 
+	// Delta state for cumulative inputs: per profile Name, the cumulative
+	// values per sample type for each stack+labels key. pending holds what
+	// the current Encode computed until CommitDeltas.
+	deltaPrev    map[string]map[string][]int64
+	deltaPending map[string]map[string][]int64
+	cum          *cumulativeInput // set while encoding a cumulative input
+
 	// Output buffers by nesting depth.
 	bufs [6][]byte
 	out  []byte
@@ -147,7 +154,111 @@ func NewEncoder(opts Options) *Encoder {
 		pFuncBy:  map[uint64]int32{},
 		pLocByID: map[uint64]int32{},
 		sampleBy: map[sampleKey]int32{},
+
+		deltaPrev:    map[string]map[string][]int64{},
+		deltaPending: map[string]map[string][]int64{},
 	}
+}
+
+// cumulativeInput is the per-input state for turning cumulative counts into
+// deltas.
+type cumulativeInput struct {
+	delta []bool             // per sample type: subtract the previous value
+	keys  []string           // per pprof sample: stack+labels key
+	first map[string]int     // key → first sample index with that key
+	cur   map[string][]int64 // key → summed cumulative values per sample type
+	prev  map[string][]int64 // key → previous cumulative values (may be nil)
+}
+
+// cumulativeTypes are the pprof sample types runtime/pprof reports as totals
+// since the process started.
+var cumulativeTypes = map[string]bool{"alloc_objects": true, "alloc_space": true, "contentions": true, "delay": true}
+
+// CommitDeltas makes the cumulative state computed by the last Encode the
+// baseline for the next one. Call it once that output has been sent (or
+// will never be sent again); an Encode whose output is discarded, for
+// example to split it, must not be committed.
+func (e *Encoder) CommitDeltas() {
+	for name, st := range e.deltaPending {
+		e.deltaPrev[name] = st
+	}
+	clear(e.deltaPending)
+}
+
+// prepareCumulative indexes a cumulative input: a stable key per sample
+// (function names, lines and labels, which survive between runtime/pprof
+// writes, unlike location IDs) and the summed values per key.
+func (e *Encoder) prepareCumulative(raw []byte, in Input) error {
+	c := &cumulativeInput{
+		delta: make([]bool, len(e.pTypes)),
+		keys:  make([]string, len(e.pSamples)),
+		first: make(map[string]int, len(e.pSamples)),
+		cur:   make(map[string][]int64, len(e.pSamples)),
+	}
+	for ti, st := range e.pTypes {
+		c.delta[ti] = cumulativeTypes[e.rawString(raw, st[0])]
+	}
+	var key []byte
+	for si, so := range e.pSamples {
+		if err := e.decodeSample(raw[so[0]:so[1]]); err != nil {
+			return err
+		}
+		key = key[:0]
+		for _, id := range e.locIDs {
+			li, ok := e.pLocByID[id]
+			if !ok {
+				return fmt.Errorf("sample references missing location id %d", id)
+			}
+			l := e.pLocs[li]
+			if l.lineEnd == l.lineStart {
+				key = binary.AppendUvarint(key, l.address)
+			}
+			for _, ln := range e.pLines[l.lineStart:l.lineEnd] {
+				if fi, ok := e.pFuncBy[ln.funcID]; ok {
+					key = append(key, e.rawBytes(raw, e.pFuncs[fi].name)...)
+				}
+				key = append(key, 0)
+				key = binary.AppendVarint(key, ln.line)
+			}
+			key = append(key, 1)
+		}
+		key = append(key, 2)
+		for i := 1; i < len(e.labels); i++ { // labels in key order
+			for j := i; j > 0 && e.rawString(raw, e.labels[j].key) < e.rawString(raw, e.labels[j-1].key); j-- {
+				e.labels[j], e.labels[j-1] = e.labels[j-1], e.labels[j]
+			}
+		}
+		for _, l := range e.labels {
+			key = append(key, e.rawBytes(raw, l.key)...)
+			key = append(key, 0)
+			key = append(key, e.rawBytes(raw, l.str)...)
+			key = binary.AppendVarint(key, l.num)
+			key = append(key, 0)
+		}
+		k := string(key)
+		c.keys[si] = k
+		vals := c.cur[k]
+		if vals == nil {
+			vals = make([]int64, len(e.pTypes))
+			c.cur[k] = vals
+			c.first[k] = si
+		}
+		for ti := range vals {
+			if ti < len(e.values) {
+				vals[ti] += e.values[ti]
+			}
+		}
+	}
+	// A cumulative profile seen earlier in this Encode is the baseline for a
+	// later one with the same name.
+	if p, ok := e.deltaPending[in.Name]; ok {
+		c.prev = p
+	} else {
+		c.prev = e.deltaPrev[in.Name]
+	}
+	e.deltaPending[in.Name] = c.cur
+	e.cum = c
+	return nil
 }
 
 // maxInterned bounds the names (functions, files, label keys and values)
@@ -244,6 +355,7 @@ type EncScope struct {
 // nothing was encoded.
 func (e *Encoder) Encode(resource []byte, scope EncScope, ins []Input) (out []byte, samples int, err error) {
 	e.resetDict()
+	clear(e.deltaPending)
 	var errs []error
 	scopes := e.bufs[1][:0]
 	for _, in := range ins {
@@ -289,6 +401,16 @@ func (e *Encoder) encodeOne(scope EncScope, in Input) (int, []byte, error) {
 	hdr, err := e.parse(raw)
 	if err != nil {
 		return 0, nil, fmt.Errorf("parse pprof %q: %w", in.Name, err)
+	}
+	e.cum = nil
+	if in.Cumulative {
+		if err := e.prepareCumulative(raw, in); err != nil {
+			return 0, nil, fmt.Errorf("pprof %q: %w", in.Name, err)
+		}
+		defer func() { e.cum = nil }()
+		if in.Baseline {
+			return 0, nil, nil
+		}
 	}
 	start := in.Start
 	if start.IsZero() && hdr.timeNanos != 0 {
@@ -695,7 +817,7 @@ func (e *Encoder) decodeSample(b []byte) error {
 func (e *Encoder) collectSamples(raw []byte, ti int) (int, error) {
 	e.samples = e.samples[:0]
 	clear(e.sampleBy)
-	for _, so := range e.pSamples {
+	for si, so := range e.pSamples {
 		if err := e.decodeSample(raw[so[0]:so[1]]); err != nil {
 			return 0, err
 		}
@@ -703,6 +825,17 @@ func (e *Encoder) collectSamples(raw []byte, ti int) (int, error) {
 			continue
 		}
 		v := e.values[ti]
+		if c := e.cum; c != nil && c.delta[ti] {
+			// The key's summed delta is emitted once, on its first sample.
+			k := c.keys[si]
+			if c.first[k] != si {
+				continue
+			}
+			v = c.cur[k][ti]
+			if prev, ok := c.prev[k]; ok && ti < len(prev) && prev[ti] <= v {
+				v -= prev[ti]
+			}
+		}
 		if v == 0 && !e.opts.KeepZeroSamples {
 			continue
 		}

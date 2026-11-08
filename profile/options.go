@@ -32,6 +32,7 @@ type config struct {
 	mutexFraction int
 	blockRate     int
 	disableGCRuns bool
+	runtimeDeltas bool
 	exportTimeout time.Duration
 	errorHandler  func(error)
 	queueSize     int
@@ -105,6 +106,15 @@ func WithMutexProfileFraction(n int) Option { return func(c *config) { c.mutexFr
 // runs, when TypeBlock is enabled. Shutdown sets the rate back to the value
 // the Profiler found (0 unless set via this package before).
 func WithBlockProfileRate(n int) Option { return func(c *config) { c.blockRate = n } }
+
+// WithRuntimeDeltas (experimental) takes heap, mutex and block profiles from
+// runtime/pprof's public API (cumulative since process start) and lets the
+// exporter subtract the previous profile, instead of computing deltas with
+// godeltaprof, which reaches into runtime/pprof through go:linkname. The
+// output is the same; the cost is that runtime/pprof writes the full
+// cumulative profile, with a fresh gzip writer, every interval. The
+// exporter must support Record.Cumulative (otlpprofilehttp does).
+func WithRuntimeDeltas(enabled bool) Option { return func(c *config) { c.runtimeDeltas = enabled } }
 
 // WithDisableGCRuns stops the Profiler from calling runtime.GC() before a
 // heap collection when no GC ran during the window. By default the GC runs,

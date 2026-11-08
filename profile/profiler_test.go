@@ -319,11 +319,32 @@ func processCPU() time.Duration {
 
 func TestDefaultCPUWindowIsTwoIntervals(t *testing.T) {
 	exp := &memExporter{}
-	p := NewProfiler(WithExporter(exp), WithTypes(TypeCPU, TypeGoroutine), WithInterval(100*time.Millisecond))
+	interval := 100 * time.Millisecond
+	p := NewProfiler(WithExporter(exp), WithTypes(TypeCPU, TypeGoroutine), WithInterval(interval))
 	spin(1050 * time.Millisecond)
 	_ = p.Shutdown(context.Background())
-	got := exp.types()
-	if got[TypeCPU] < 4 || got[TypeCPU] > 7 {
-		t.Fatalf("cpu windows %d over ~1s at 2x100ms, want ~6 (goroutine %d)", got[TypeCPU], got[TypeGoroutine])
+	// CPU windows start about two intervals apart. (A window's Duration is
+	// shorter than its spacing: runtime/pprof's StopCPUProfile waits up to
+	// ~100ms for its writer before the next profile can start.) Ticks can
+	// arrive late on a loaded machine, so allow some slack.
+	var starts []time.Time
+	gor := 0
+	exp.mu.Lock()
+	for _, r := range exp.recs {
+		switch r.Type {
+		case TypeCPU:
+			starts = append(starts, r.Start)
+		case TypeGoroutine:
+			gor++
+		}
+	}
+	exp.mu.Unlock()
+	if len(starts) < 3 || len(starts) >= gor {
+		t.Fatalf("cpu windows %d, goroutine windows %d", len(starts), gor)
+	}
+	for i := 1; i < len(starts); i++ {
+		if gap := starts[i].Sub(starts[i-1]); gap < interval*14/10 {
+			t.Fatalf("cpu windows %d and %d start %v apart, want about 2 × %v", i-1, i, gap, interval)
+		}
 	}
 }

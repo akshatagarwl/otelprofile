@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"runtime"
 	"runtime/debug"
 	"runtime/metrics"
@@ -35,14 +36,17 @@ type Profiler struct {
 	cpuBuf  *bytes.Buffer
 	cpuOn   bool
 	cpuErrd bool
-	heap    *godeltaprof.HeapProfiler
-	mutex   *godeltaprof.BlockProfiler
-	block   *godeltaprof.BlockProfiler
-	lastGC  uint32
-	enabled map[Type]bool
-	buf     bytes.Buffer // reused for every non-CPU profile write
-	cpuFrom time.Time    // when the current CPU window started
-	cpuTick time.Time    // the collection tick that started it, for scheduling
+	heap    profileSource
+	mutex   profileSource
+	block   profileSource
+	// baselines holds the first cumulative profiles (WithRuntimeDeltas),
+	// sent ahead of the first window so the exporter can seed its deltas.
+	baselines []Record
+	lastGC    uint32
+	enabled   map[Type]bool
+	buf       bytes.Buffer // reused for every non-CPU profile write
+	cpuFrom   time.Time    // when the current CPU window started
+	cpuTick   time.Time    // the collection tick that started it, for scheduling
 
 	prevMutexFraction int
 	setMutex          bool
@@ -118,8 +122,9 @@ func (p *Profiler) begin() {
 			runtime.SetMutexProfileFraction(DefaultMutexProfileFraction)
 			p.setMutex = true
 		}
-		p.mutex = godeltaprof.NewMutexProfilerWithOptions(godeltaprof.ProfileOptions{GenericsFrames: true, LazyMappings: true})
-		_ = p.mutex.Profile(discard{})
+		p.mutex = p.source("mutex", func() profileSource {
+			return godeltaprof.NewMutexProfilerWithOptions(godeltaprof.ProfileOptions{GenericsFrames: true, LazyMappings: true})
+		}, TypeMutex)
 	}
 	if p.enabled[TypeBlock] {
 		rate := p.cfg.blockRate
@@ -128,12 +133,14 @@ func (p *Profiler) begin() {
 		}
 		runtime.SetBlockProfileRate(rate)
 		p.setBlock = true
-		p.block = godeltaprof.NewBlockProfilerWithOptions(godeltaprof.ProfileOptions{GenericsFrames: true, LazyMappings: true})
-		_ = p.block.Profile(discard{})
+		p.block = p.source("block", func() profileSource {
+			return godeltaprof.NewBlockProfilerWithOptions(godeltaprof.ProfileOptions{GenericsFrames: true, LazyMappings: true})
+		}, TypeBlock)
 	}
 	if p.enabled[TypeHeap] {
-		p.heap = godeltaprof.NewHeapProfilerWithOptions(godeltaprof.ProfileOptions{GenericsFrames: true, LazyMappings: true})
-		_ = p.heap.Profile(discard{})
+		p.heap = p.source("allocs", func() profileSource {
+			return godeltaprof.NewHeapProfilerWithOptions(godeltaprof.ProfileOptions{GenericsFrames: true, LazyMappings: true})
+		}, TypeHeap)
 		p.lastGC = numGC()
 	}
 	if p.enabled[TypeCPU] {
@@ -237,6 +244,14 @@ func (p *Profiler) collect(restart, force bool) (recs []Record) {
 			p.startCPU()
 		}
 	}
+	if len(p.baselines) > 0 {
+		recs = append(recs, p.baselines...)
+		p.baselines = nil
+	}
+	cumulative := p.cfg.runtimeDeltas
+	crec := func(t Type, b []byte) {
+		recs = append(recs, Record{Type: t, Start: start, Duration: end.Sub(start), Pprof: b, Cumulative: cumulative})
+	}
 	buf := &p.buf
 	buf.Reset()
 	if p.enabled[TypeGoroutine] {
@@ -253,7 +268,7 @@ func (p *Profiler) collect(restart, force bool) (recs []Record) {
 		if err := p.mutex.Profile(buf); err != nil {
 			p.handle(fmt.Errorf("mutex profile: %w", err))
 		} else {
-			rec(TypeMutex, bytes.Clone(buf.Bytes()))
+			crec(TypeMutex, bytes.Clone(buf.Bytes()))
 		}
 		buf.Reset()
 	}
@@ -261,7 +276,7 @@ func (p *Profiler) collect(restart, force bool) (recs []Record) {
 		if err := p.block.Profile(buf); err != nil {
 			p.handle(fmt.Errorf("block profile: %w", err))
 		} else {
-			rec(TypeBlock, bytes.Clone(buf.Bytes()))
+			crec(TypeBlock, bytes.Clone(buf.Bytes()))
 		}
 		buf.Reset()
 	}
@@ -275,7 +290,7 @@ func (p *Profiler) collect(restart, force bool) (recs []Record) {
 			if err := p.heap.Profile(buf); err != nil {
 				p.handle(fmt.Errorf("heap profile: %w", err))
 			} else {
-				rec(TypeHeap, bytes.Clone(buf.Bytes()))
+				crec(TypeHeap, bytes.Clone(buf.Bytes()))
 			}
 			p.lastGC = gc
 		}
@@ -385,6 +400,42 @@ func (p *Profiler) Shutdown(ctx context.Context) error {
 		p.shutErr = errors.Join(errs...)
 	})
 	return p.shutErr
+}
+
+// profileSource writes one profile: a godeltaprof delta profile, or (with
+// WithRuntimeDeltas) runtime/pprof's cumulative profile.
+type profileSource interface {
+	Profile(w io.Writer) error
+}
+
+// runtimeProfile writes a runtime/pprof profile through the public API.
+type runtimeProfile struct{ name string }
+
+func (r runtimeProfile) Profile(w io.Writer) error {
+	prof := pprof.Lookup(r.name)
+	if prof == nil {
+		return fmt.Errorf("no runtime profile %q", r.name)
+	}
+	return prof.WriteTo(w, 0)
+}
+
+// source returns the delta or runtime source for a type and primes it: a
+// godeltaprof profiler discards its first (since-start) profile; a runtime
+// source's first profile becomes the baseline record.
+func (p *Profiler) source(name string, delta func() profileSource, t Type) profileSource {
+	if !p.cfg.runtimeDeltas {
+		d := delta()
+		_ = d.Profile(discard{})
+		return d
+	}
+	r := runtimeProfile{name: name}
+	var b bytes.Buffer
+	if err := r.Profile(&b); err != nil {
+		p.handle(fmt.Errorf("%s baseline: %w", t, err))
+	} else {
+		p.baselines = append(p.baselines, Record{Type: t, Start: p.start, Pprof: b.Bytes(), Cumulative: true, Baseline: true})
+	}
+	return r
 }
 
 type discard struct{}

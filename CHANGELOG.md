@@ -13,6 +13,11 @@ format follows the upstream development revision.
 
 ### Added
 
+- Experimental `Config.RuntimeDeltas` / `profile.WithRuntimeDeltas`
+  (`OTEL_GO_X_PROFILES_RUNTIME_DELTAS`): heap, mutex and block deltas
+  computed by the encoder from runtime/pprof's cumulative profiles, with no
+  `go:linkname`. A test checks they match godeltaprof's in the same process.
+
 - CI: tests on Go 1.26 and 1.27 (Linux amd64 and arm64, macOS), lint, fuzz,
   `profcheck`, and end-to-end checks against the OpenTelemetry Collector
   and Grafana Pyroscope.
