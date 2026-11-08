@@ -87,7 +87,7 @@ You need Go 1.26+ and Docker.
    `Stop`. The collector logs each batch:
 
    ```sh
-   docker logs otelcol 2>&1 | grep -E 'service.name|sample records|main.work' | head
+   docker logs otelcol 2>&1 | grep -E 'Str\(quickstart\)|sample records|main\.work' | head
    docker rm -f otelcol
    ```
 
