@@ -7,15 +7,13 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 )
 
-// DefaultInterval matches pyroscope-go's default upload rate.
+// DefaultInterval is how often profiles are collected and uploaded.
 const DefaultInterval = 15 * time.Second
 
 // DefaultCPUWindowIntervals is how many intervals a CPU profile spans by
 // default. Each CPU profiler restart costs the runtime about 2 MB of
-// allocations, the largest single cost of continuous profiling. pyroscope-go
-// in practice restarts its CPU profile every other upload (its ticker skips
-// every second tick), so two intervals gives the same CPU cadence: with the
-// defaults, CPU every 30s and everything else every 15s.
+// allocations, the largest single cost of continuous profiling, so with the
+// defaults CPU profiles cover 30s and everything else 15s.
 const DefaultCPUWindowIntervals = 2
 
 // Default sampling rates applied when TypeMutex or TypeBlock is enabled and
@@ -109,8 +107,8 @@ func WithMutexProfileFraction(n int) Option { return func(c *config) { c.mutexFr
 func WithBlockProfileRate(n int) Option { return func(c *config) { c.blockRate = n } }
 
 // WithDisableGCRuns stops the Profiler from calling runtime.GC() before a
-// heap collection when no GC ran during the window. pyroscope-go has the same
-// switch with the same default (GC runs enabled), which keeps inuse_* fresh.
+// heap collection when no GC ran during the window. By default the GC runs,
+// which keeps inuse_* current.
 func WithDisableGCRuns(disable bool) Option { return func(c *config) { c.disableGCRuns = disable } }
 
 // WithExportTimeout bounds one Export call (default 30s).

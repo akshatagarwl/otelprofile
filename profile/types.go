@@ -1,8 +1,8 @@
 // Package profile collects Go runtime profiles on a fixed interval and hands
 // them to an Exporter. It is shaped like a future go.opentelemetry.io/otel/sdk/profile.
 //
-// Defaults touch no process-wide runtime setting except the CPU profiler,
-// which matches pyroscope-go's defaults (cpu + heap). Mutex and block
+// The defaults (cpu + heap) touch no process-wide runtime setting except the
+// CPU profiler. Mutex and block
 // profiling are opt-in because they change process-wide sampling rates;
 // Shutdown restores any rate the Profiler changed.
 package profile
@@ -37,8 +37,7 @@ const (
 	TypeBlock
 )
 
-// DefaultTypes are collected when no types are configured. They match
-// pyroscope-go's defaults.
+// DefaultTypes are collected when no types are configured.
 var DefaultTypes = []Type{TypeCPU, TypeHeap}
 
 // AllTypes lists every supported type.
@@ -62,7 +61,7 @@ func (t Type) String() string {
 }
 
 // ParseTypes parses a comma-separated list such as "cpu,heap,mutex". It
-// accepts the runtime names above and pyroscope-go's names (alloc_objects,
+// accepts the runtime names above and sample-type names (alloc_objects,
 // inuse_space, goroutines, mutex_count, block_duration, ...). "all" selects
 // every type.
 func ParseTypes(s string) ([]Type, error) {

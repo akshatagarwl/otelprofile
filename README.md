@@ -1,8 +1,8 @@
 # otelprofile
 
 Continuous profiling for Go that pushes standard **OTLP Profiles**. One call
-starts it, like `pyroscope.Start`. It sends to any OTLP profiles receiver and
-links CPU samples to the spans that produced them.
+starts it. It sends to any OTLP profiles receiver and links CPU samples to
+the spans that produced them.
 
 > **Status: v0.1.0, experimental.** OTLP Profiles is still a *development*
 > signal (`/v1development/profiles`, opentelemetry-proto v1.10+ layout,
@@ -106,11 +106,11 @@ Explicit fields win over the environment.
 | `Endpoint` (base URL or full `/v1development/profiles` URL) | `OTEL_EXPORTER_OTLP_PROFILES_ENDPOINT` (full URL), `OTEL_EXPORTER_OTLP_ENDPOINT` (base URL) | `http://localhost:4318` |
 | `Headers` | `OTEL_EXPORTER_OTLP_[PROFILES_]HEADERS` (`k=v,k2=v2`) | none |
 | `Tags` (static key/values on every profile) | `OTEL_RESOURCE_ATTRIBUTES` | host, OS, process, runtime, `service.instance.id` |
-| `ProfileTypes` | `OTEL_GO_X_PROFILES_TYPES` (`cpu,heap,goroutine,mutex,block` or `all`) | `cpu,heap` (pyroscope-go's default) |
+| `ProfileTypes` | `OTEL_GO_X_PROFILES_TYPES` (`cpu,heap,goroutine,mutex,block` or `all`) | `cpu,heap` |
 | `Interval` | `OTEL_GO_X_PROFILES_INTERVAL` (`15s`) | 15s |
-| `CPUWindow` (length of each CPU profile) | `OTEL_GO_X_PROFILES_CPU_WINDOW` | 2 × `Interval` (30s). Each CPU profiler restart costs the runtime ~2 MB; pyroscope-go at a 15s upload rate also restarts its CPU profile every 30s. Set it to `Interval` for 15s CPU resolution. |
+| `CPUWindow` (length of each CPU profile) | `OTEL_GO_X_PROFILES_CPU_WINDOW` | 2 × `Interval` (30s). Each CPU profiler restart costs the Go runtime ~2 MB, so CPU profiles cover two intervals. Set it to `Interval` for 15s CPU resolution. |
 | `MutexProfileFraction`, `BlockProfileRate` | none | 5 and 10µs, only when the type is enabled; restored on `Stop` |
-| `DisableGCRuns` | none | false (a GC runs before a heap collection if none ran in the window, as in pyroscope-go) |
+| `DisableGCRuns` | none | false (a GC runs before a heap collection if none ran in the window, so in-use figures stay current) |
 | — | `OTEL_EXPORTER_OTLP_[PROFILES_]TIMEOUT`, `_COMPRESSION` (`gzip` or `none`), `_CERTIFICATE`, `_CLIENT_CERTIFICATE`, `_CLIENT_KEY` | 10s, none (the OTLP default) |
 | — | `OTEL_SDK_DISABLED=true` turns `Start` into a no-op | |
 
@@ -130,9 +130,8 @@ never fatal. Repeats of the same error within a minute are collapsed.
 
 ## Dynamic labels
 
-Wrap a code region to label every CPU and goroutine sample it produces
-(like `pyroscope.TagWrapper`). Labels become OTLP sample attributes, which
-sigiro can filter on:
+Wrap a code region to label every CPU and goroutine sample it produces.
+Labels become OTLP sample attributes, which backends can filter on:
 
 ```go
 otelprofile.TagWrapper(ctx, otelprofile.Labels("endpoint", "/checkout"), func(ctx context.Context) {
@@ -173,11 +172,13 @@ go test ./internal/transform -run x -fuzz FuzzTransform -fuzztime 1m
 golangci-lint run ./...
 ```
 
-`examples/demo` is the comparison app used by the scorecard: the same
-workload with `-profiler=otel`, `-profiler=pyroscope`, `both` or
-`alternate`. `SCORECARD.md` and `ROUNDS.md` record how v0.1.0 was measured
-against pyroscope-go; `evidence/` holds the text evidence (screenshots of
-the closed-source sigiro dashboard used during testing are not included).
+Coming from pyroscope-go? `Start`, `TagWrapper` and `Labels` work the same
+way, and `ProfileTypes` accepts pyroscope-go's type names.
+
+`examples/demo` is the benchmark app behind `SCORECARD.md` and
+`ROUNDS.md`, which record how v0.1.0 was measured (accuracy against
+pyroscope-go, overhead in 32-minute soaks); `evidence/` holds the text
+evidence.
 
 ## License
 

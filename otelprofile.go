@@ -63,7 +63,7 @@ type Config struct {
 	// Headers are sent with every request (e.g. Authorization).
 	// Env: OTEL_EXPORTER_OTLP_[PROFILES_]HEADERS.
 	Headers map[string]string
-	// Tags are static key/values added to the resource, like pyroscope Tags.
+	// Tags are static key/values added to the resource of every profile.
 	// Env: OTEL_RESOURCE_ATTRIBUTES.
 	Tags map[string]string
 	// ProfileTypes to collect. Env: OTEL_GO_X_PROFILES_TYPES
@@ -74,8 +74,7 @@ type Config struct {
 	Interval time.Duration
 	// CPUWindow is how long each CPU profile runs before it is exported and
 	// restarted. Env: OTEL_GO_X_PROFILES_CPU_WINDOW. Default: 2 × Interval
-	// (30s), the cadence pyroscope-go has in practice. See
-	// profile.WithCPUWindow.
+	// (30s). See profile.WithCPUWindow.
 	CPUWindow time.Duration
 	// MutexProfileFraction and BlockProfileRate are applied while profiling
 	// when ProfileMutex / ProfileBlock are enabled, and restored on Stop.
@@ -83,7 +82,8 @@ type Config struct {
 	MutexProfileFraction int
 	BlockProfileRate     int
 	// DisableGCRuns stops the forced GC before a heap collection when no GC
-	// ran during the window (same switch and default as pyroscope-go).
+	// ran during the window. By default the GC runs, which keeps in-use
+	// heap figures current.
 	DisableGCRuns bool
 	// Logger receives errors (never fatal). Default: slog.Default().
 	Logger *slog.Logger
@@ -274,12 +274,12 @@ func (p *Profiler) Endpoint() string { return p.url }
 // LabelSet is a set of dynamic labels.
 type LabelSet = pprof.LabelSet
 
-// Labels builds a LabelSet from key/value pairs, like pyroscope.Labels.
+// Labels builds a LabelSet from key/value pairs.
 func Labels(kv ...string) LabelSet { return pprof.Labels(kv...) }
 
 // TagWrapper runs fn with labels attached to every CPU and goroutine sample
-// it (and goroutines it starts) produce, like pyroscope.TagWrapper. The
-// labels become sample attributes that backends can filter on.
+// it (and goroutines it starts) produce. The labels become OTLP sample
+// attributes that backends can filter on.
 func TagWrapper(ctx context.Context, labels LabelSet, fn func(context.Context)) {
 	pprof.Do(ctx, labels, fn)
 }
