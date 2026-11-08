@@ -59,8 +59,10 @@ allocation per cycle than godeltaprof.
 
 ## What would make it cheap
 
-- A runtime API that hands out profile records without serializing them
-  (see the accepted `pprof` proposals golang/go#42502 and #74545).
+- A runtime API that hands out profile records without serializing them:
+  the open proposal golang/go#74545 (`Recorder` types in runtime/pprof).
+  The accepted golang/go#42502 (configurable CPU profiles) is related but
+  covers the CPU profiler only.
 - Or `runtime/pprof` reusing its gzip writer, which removes most of the
   allocation.
 
