@@ -4,3 +4,5 @@
 node_modules/
 examples/demo/demo
 examples/demo/memcheck/memcheck
+collector.log
+out/

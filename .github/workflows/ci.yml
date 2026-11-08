@@ -1,0 +1,101 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, go ${{ matrix.go }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
+        go: ["1.26.x", "1.27.x"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: |
+            go.sum
+            examples/demo/go.sum
+      - name: vet
+        run: go vet ./...
+      - name: test (race)
+        run: go test -race -count=1 ./...
+      - name: demo builds (all variants)
+        working-directory: examples/demo
+        run: |
+          go vet ./...
+          go build -o /dev/null .
+          go build -tags nootel,nopyro -o /dev/null .
+          go build -tags nopyro -o /dev/null .
+          go build -tags nootel -o /dev/null .
+          go build -o /dev/null ./memcheck
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.27.x"
+      - uses: golangci/golangci-lint-action@v9.3.0
+        with:
+          version: v2.15.0
+      - name: lint the demo module
+        uses: golangci/golangci-lint-action@v9.3.0
+        with:
+          version: v2.15.0
+          working-directory: examples/demo
+
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.27.x"
+      - name: fuzz the encoder against the reference converter
+        run: go test -run '^$' -fuzz FuzzEncoder -fuzztime 45s ./internal/transform
+      - name: fuzz the reference converter
+        run: go test -run '^$' -fuzz FuzzTransform -fuzztime 30s ./internal/transform
+
+  conformance:
+    name: profcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.27.x"
+      - name: install profcheck
+        run: go install github.com/open-telemetry/sig-profiling/profcheck/cmd/profcheck@668bf42ffd459941cbd1fc1977c63384eaeaa73a
+      - name: profile every type, check every request
+        run: |
+          go run ./cmd/otlpdump -dir out -duration 12s
+          for f in out/*.pb; do profcheck -check-dupes -check-orphans -check-sample-shapes "$f"; done
+
+  collector:
+    name: OpenTelemetry Collector accepts the output
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.27.x"
+          cache-dependency-path: examples/demo/go.sum
+      - run: scripts/ci-collector.sh otel/opentelemetry-collector-contrib:0.165.0
+      - if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: collector-log
+          path: collector.log

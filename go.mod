@@ -1,6 +1,6 @@
 module github.com/akshatagarwl/otelprofile
 
-go 1.27.3
+go 1.26.0
 
 require (
 	github.com/google/pprof v0.0.0-20261105003125-4bf881d7fb0b
