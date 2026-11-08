@@ -4,7 +4,7 @@ All notable changes to this module. Versions follow semantic versioning;
 before 1.0 minor versions may break the API, and the OTLP Profiles wire
 format follows the upstream development revision.
 
-## Unreleased
+## v0.2.0 — 2026-11-08
 
 ### Changed
 

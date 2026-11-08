@@ -4,7 +4,7 @@ Continuous profiling for Go that pushes standard **OTLP Profiles**. One call
 starts it. It sends to any OTLP profiles receiver and links CPU samples to
 the spans that produced them.
 
-> **Status: v0.1.0, experimental.** OTLP Profiles is still a *development*
+> **Status: v0.2.0, experimental.** OTLP Profiles is still a *development*
 > signal (`/v1development/profiles`, opentelemetry-proto v1.10+ layout,
 > profiles development revision 1). The wire format will change before it is
 > stable, and so may this module's API.
@@ -85,7 +85,7 @@ You need Go 1.26+ and Docker.
 
    ```sh
    go mod init quickstart
-   go get github.com/akshatagarwl/otelprofile@v0.1.0
+   go get github.com/akshatagarwl/otelprofile@v0.2.0
    go run .
    ```
 
