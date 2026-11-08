@@ -7,9 +7,15 @@ the spans that produced them.
 > **Status: v0.1.0, experimental.** OTLP Profiles is still a *development*
 > signal (`/v1development/profiles`, opentelemetry-proto v1.10+ layout,
 > profiles development revision 1). The wire format will change before it is
-> stable, and so may this module's API. Tested against the OpenTelemetry
-> Collector (`otlp` receiver, 0.165.0, `service.profilesSupport` gate) and
-> against sigiro.
+> stable, and so may this module's API.
+
+Receivers tested in CI or by hand:
+
+| Receiver | Result |
+|---|---|
+| OpenTelemetry Collector 0.165.0 (`otlp` receiver, `debug` exporter, `service.profilesSupport` gate) | All types, span links (CI) |
+| Grafana Pyroscope 2.4.3 (OTLP endpoint on port 4040) | All types (CI). Mutex and block profiles both land under Pyroscope's `contentions` type, so they are not told apart there. |
+| sigiro | All types, labels, span links, trace → profile view |
 
 ## Quickstart (about 3 minutes)
 

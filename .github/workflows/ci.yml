@@ -99,3 +99,20 @@ jobs:
         with:
           name: collector-log
           path: collector.log
+
+  pyroscope:
+    name: Grafana Pyroscope accepts the output (OTLP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.27.x"
+          cache-dependency-path: examples/demo/go.sum
+      # The server image is run as a black box over its public API.
+      - run: scripts/ci-pyroscope.sh grafana/pyroscope:2.4.3
+      - if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: pyroscope-log
+          path: pyroscope.log

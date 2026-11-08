@@ -6,3 +6,4 @@ examples/demo/demo
 examples/demo/memcheck/memcheck
 collector.log
 out/
+pyroscope.log
