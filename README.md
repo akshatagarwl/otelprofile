@@ -21,9 +21,13 @@ trace and span that produced them.
 Every 15 seconds (CPU every 30) it reads the Go runtime's profiles, turns
 them into one OTLP request and posts it. Nothing else to run.
 
-| Heap in use | Any OTLP backend, e.g. Grafana Pyroscope |
-|---|---|
-| <img src="docs/assets/sigiro-heap.png" alt="In-use heap flame graph of the demo app"> | <img src="docs/assets/pyroscope-cpu.png" alt="The same demo app's CPU profile in Grafana Pyroscope"> |
+Heap in use, same app:
+
+<img src="docs/assets/sigiro-heap.png" alt="In-use heap flame graph of the demo app" width="100%">
+
+The same data in Grafana Pyroscope, through its OTLP endpoint:
+
+<img src="docs/assets/pyroscope-cpu.png" alt="The demo app's CPU profile in Grafana Pyroscope" width="100%">
 
 ## Quickstart (about 3 minutes)
 
@@ -180,11 +184,13 @@ tp := sdktrace.NewTracerProvider(...)
 otel.SetTracerProvider(profiletrace.NewTracerProvider(tp))
 ```
 
-A backend can then open the CPU profile of one span:
+A backend can then list the spans of a trace that used CPU:
 
-| A trace's spans with CPU time | "Open profile" on `query-db` |
-|---|---|
-| <img src="docs/assets/sigiro-trace.png" alt="Trace sheet listing the spans that have CPU samples"> | <img src="docs/assets/sigiro-span.png" alt="Flame graph of one span's CPU samples, 100% linked"> |
+<img src="docs/assets/sigiro-trace.png" alt="Trace sheet listing the spans that have CPU samples" width="60%">
+
+and open the profile of one span (here `query-db`):
+
+<img src="docs/assets/sigiro-span.png" alt="Flame graph of one span's CPU samples" width="100%">
 
 `profiletrace.WithScope(profiletrace.ScopeRoot)` labels only local root
 spans, which is cheaper.
