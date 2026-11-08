@@ -1,0 +1,18 @@
+name: Receiver compatibility report
+description: Tell us how otelprofile works with a backend or collector
+labels: [compatibility]
+body:
+  - type: input
+    id: receiver
+    attributes:
+      label: Receiver and version
+      placeholder: e.g. Grafana Pyroscope 2.4.3, otelcol-contrib 0.165.0
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: What worked and what did not
+      description: Profile types, labels, span links, anything shown wrongly.
+    validations:
+      required: true
