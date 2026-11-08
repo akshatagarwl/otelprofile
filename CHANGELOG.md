@@ -4,6 +4,14 @@ All notable changes to this module. Versions follow semantic versioning;
 before 1.0 minor versions may break the API, and the OTLP Profiles wire
 format follows the upstream development revision.
 
+## Unreleased
+
+### Documentation
+
+- README: screenshots of real profiles (sigiro, Grafana Pyroscope, trace to
+  span profile) and animated diagrams of the export pipeline, trace links,
+  the OTLP dictionary and overhead. Sources in `docs/assets/src`.
+
 ## v0.2.0 — 2026-11-08
 
 ### Changed
