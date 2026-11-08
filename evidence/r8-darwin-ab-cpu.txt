@@ -1,0 +1,8 @@
+range 2026-11-08T13:27:28+05:30 .. 2026-11-08T13:40:28+05:30 (13m0s), A=r8ab-alt-pyro (pyroscope-go via bridge), B=r8ab-alt-otel (otelprofile OTLP)
+tolerance: totals ±10%, top-20 stack shares ±3.0 points
+goroutines: the profilers' own and in-flight upload goroutines are left out on both sides
+cpu: totals are complete; the HTTP response write-syscall path is left out of the top-20 share comparison on both sides (darwin rule)
+
+type                      A total          B total     diff  top-N max  overlap  result
+cpu                   53960000000      53790000000    -0.3%      0.79pt    15/20  PASS
+samples                      5396             5379    -0.3%      0.79pt    14/20  PASS

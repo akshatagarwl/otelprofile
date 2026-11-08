@@ -1,0 +1,20 @@
+otelprofile
+Copyright 2026 Akshat Agarwal
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It depends on, and does not copy code from:
+- github.com/grafana/pyroscope-go/godeltaprof (Apache-2.0; contains files
+  derived from the Go runtime/pprof package, BSD-3-Clause, Copyright The Go
+  Authors) for delta heap, mutex and block profiles.
+- go.opentelemetry.io/otel and go.opentelemetry.io/otel/sdk (Apache-2.0).
+- github.com/klauspost/compress (BSD-3-Clause / Apache-2.0 / MIT parts).
+- google.golang.org/protobuf (BSD-3-Clause), protowire only.
+
+The public API shape follows github.com/grafana/pyroscope-go (Apache-2.0)
+and the span-label idea follows github.com/grafana/otel-profiling-go
+(Apache-2.0); both were used as design references only. Tests use
+github.com/google/pprof (Apache-2.0), the generated OTLP protos
+(Apache-2.0) and github.com/open-telemetry/sig-profiling/profcheck
+(Apache-2.0); the benchmark demo links github.com/grafana/pyroscope-go
+(Apache-2.0) for comparison.

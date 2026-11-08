@@ -1,0 +1,2 @@
+r6ab-cpu-otel rusage_cpu_s=124.508 profiled_cpu_s=109.23 ratio=0.877
+r6ab-cpu-pyroscope rusage_cpu_s=129.339 profiled_cpu_s=112.55 ratio=0.87

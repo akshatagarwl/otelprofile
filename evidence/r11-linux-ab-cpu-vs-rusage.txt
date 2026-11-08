@@ -1,0 +1,2 @@
+r11lab-cpu-otel rusage_cpu_s=114.363 profiled_cpu_s=113.72 ratio=0.994
+r11lab-cpu-pyroscope rusage_cpu_s=115.254 profiled_cpu_s=114.53 ratio=0.994

@@ -1,0 +1,4 @@
+{"stats":"exit","profiler":"none","uptime_s":480,"cpu_s":53.617,"maxrss_mb":33.7,"alloc_mb":13247.9,"alloc_objects":5334504,"gc_cycles":2466,"runtime_mem_mb":26.6}
+{"stats":"exit","profiler":"otel","uptime_s":480,"cpu_s":55.300,"maxrss_mb":46.0,"alloc_mb":14266.3,"alloc_objects":5705449,"gc_cycles":1942,"runtime_mem_mb":38.8}
+{"stats":"exit","profiler":"otelw","uptime_s":480,"cpu_s":55.100,"maxrss_mb":49.7,"alloc_mb":13791.7,"alloc_objects":5665561,"gc_cycles":1740,"runtime_mem_mb":42.9}
+{"stats":"exit","profiler":"pyroscope","uptime_s":480,"cpu_s":55.685,"maxrss_mb":40.4,"alloc_mb":13832.5,"alloc_objects":5689605,"gc_cycles":2053,"runtime_mem_mb":31.1}

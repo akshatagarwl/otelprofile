@@ -1,0 +1,2 @@
+r13ab-cpu-otel rusage_cpu_s=122.478 profiled_cpu_s=107.38 ratio=0.877
+r13ab-cpu-pyroscope rusage_cpu_s=124.715 profiled_cpu_s=107.53 ratio=0.862

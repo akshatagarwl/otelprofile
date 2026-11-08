@@ -1,0 +1,10 @@
+ok  	github.com/akshatagarwl/otelprofile	7.613s
+?   	github.com/akshatagarwl/otelprofile/cmd/abcompare	[no test files]
+?   	github.com/akshatagarwl/otelprofile/cmd/otlpdump	[no test files]
+?   	github.com/akshatagarwl/otelprofile/internal/otlpread	[no test files]
+ok  	github.com/akshatagarwl/otelprofile/internal/transform	2.391s
+?   	github.com/akshatagarwl/otelprofile/internal/transform/oracle	[no test files]
+ok  	github.com/akshatagarwl/otelprofile/otlpprofilehttp	2.845s
+ok  	github.com/akshatagarwl/otelprofile/profile	5.978s
+ok  	github.com/akshatagarwl/otelprofile/profiletrace	1.406s
+?   	github.com/akshatagarwl/otelprofile/tools/devproxy	[no test files]

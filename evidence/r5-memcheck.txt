@@ -1,0 +1,6 @@
+Exact retained heap (runtime.MemProfileRate=1), 1 s interval, 60 s, bin/memcheck:
+none:               non-workload in-use   46 KB, TotalAlloc 126 MB
+pyroscope-go:       non-workload in-use 2591 KB, TotalAlloc 269 MB (repeats: 2588, 2583 KB; 266, 265 MB)
+otelprofile:        non-workload in-use 3724 KB, TotalAlloc 268 MB  (encoder state ~1.08 MB under exportLoop)
+otelprofile, fresh encoder per export (experiment, not shipped):
+                    non-workload in-use 2704 KB, TotalAlloc 372 MB (repeat: 2692 KB, 370 MB)

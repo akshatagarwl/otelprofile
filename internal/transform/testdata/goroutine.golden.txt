@@ -1,0 +1,3 @@
+goroutine|runtime.main;main.main;testing.(*M).Run;testing.runTests;testing.tRunner;testing.runTests.func1;testing.(*T).Run;runtime.chanrecv1;runtime.chanrecv;runtime.gopark|| 1
+goroutine|runtime/pprof.Do;github.com/akshatagarwl/otelprofile/internal/transform.TestRecordFixtures.func6;runtime.chanrecv1;runtime.chanrecv;runtime.gopark|pool=workers| 3
+goroutine|testing.tRunner;github.com/akshatagarwl/otelprofile/internal/transform.TestRecordFixtures;runtime/pprof.(*Profile).WriteTo;runtime/pprof.writeGoroutine;runtime/pprof.writeRuntimeProfile;runtime.pprof_goroutineProfileWithLabels;runtime.goroutineProfileWithLabels|| 1

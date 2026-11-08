@@ -1,0 +1,13 @@
+range 2026-11-08T01:43:35+05:30 .. 2026-11-08T01:53:35+05:30 (10m0s), A=r4ab-both-pyro (pyroscope-go via bridge), B=r4ab-both-otel (otelprofile OTLP)
+tolerance: totals ±10%, top-20 stack shares ±3.0 points (goroutines ±5 points)
+
+type                      A total          B total     diff  top-N max  overlap  result
+alloc_objects             7486186          7477372    -0.1%      0.23pt    19/20  PASS
+alloc_space           17946907391      17946734825    -0.0%      0.06pt    20/20  PASS
+block_count                924421           925296    +0.1%      0.04pt    20/20  PASS
+block_duration     11488889626946   11488986843922    +0.0%      0.00pt    20/20  PASS
+goroutines                     80               84    +4.7%      3.63pt    17/20  PASS
+inuse_objects               57756            57857    +0.2%      0.17pt    20/20  PASS
+inuse_space              13653959         13690199    +0.3%      0.28pt    20/20  PASS
+mutex_count                530655           531975    +0.2%      0.00pt    19/20  PASS
+mutex_duration      2391222002325    2395315805485    +0.2%      0.00pt    19/20  PASS

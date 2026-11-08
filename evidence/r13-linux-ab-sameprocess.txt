@@ -1,0 +1,14 @@
+range 2026-11-08T17:16:55+05:30 .. 2026-11-08T17:26:55+05:30 (10m0s), A=r13lab-both-pyro (pyroscope-go via bridge), B=r13lab-both-otel (otelprofile OTLP)
+tolerance: totals ±10%, top-20 stack shares ±3.0 points
+goroutines: the profilers' own and in-flight upload goroutines are left out on both sides
+
+type                      A total          B total     diff  top-N max  overlap  result
+alloc_objects             7734355          7738486    +0.1%      0.01pt    20/20  PASS
+alloc_space           18077803612      18083565649    +0.0%      0.00pt    20/20  PASS
+block_count                623974           623979    +0.0%      0.01pt    20/20  PASS
+block_duration     11391144036283   11375959413935    -0.1%      0.08pt    20/20  PASS
+goroutines                     72               73    +1.1%      0.76pt    16/19  PASS
+inuse_objects                5586             5524    -1.1%      0.83pt    20/20  PASS
+inuse_space              11970207         11936601    -0.3%      0.22pt    20/20  PASS
+mutex_count                228945           228865    -0.0%      0.02pt    19/20  PASS
+mutex_duration      2284055157718    2297474713391    +0.6%      0.00pt    20/20  PASS

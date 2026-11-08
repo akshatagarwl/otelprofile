@@ -1,0 +1,18 @@
+{
+  "title": "Dashboard · Sigiro",
+  "flamegraphTotal": "8730864846.552622",
+  "flamegraphFrames": "215",
+  "rects": 31,
+  "topFunctions": "100",
+  "firstFunction": "main.allocLarge",
+  "stats": {
+    "total": "8.10 GiB",
+    "stacks": "50",
+    "collections": "20",
+    "linked": "0.00%"
+  },
+  "totalNote": "baseline 8.23 GiB (-1.5%)",
+  "filters": [],
+  "url": "http://localhost:19999/dashboard/profiles/?service=soak4-otel&ptype=alloc_space&compare=previous&from=1794083054000&to=1794083354000",
+  "errors": []
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Dashboard · Sigiro",
+  "flamegraphTotal": "7880000000",
+  "flamegraphFrames": "217",
+  "rects": 127,
+  "topFunctions": "100",
+  "firstFunction": "main.spinLCG",
+  "stats": {
+    "total": "7.88 s",
+    "stacks": "37",
+    "collections": "2",
+    "linked": "92.44%"
+  },
+  "totalNote": "CPU time",
+  "filters": [],
+  "url": "http://localhost:19999/dashboard/profiles/?service=r10-types-otel&range=15m",
+  "errors": []
+}

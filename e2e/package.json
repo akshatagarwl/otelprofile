@@ -1,0 +1,8 @@
+{
+  "name": "otelprofile-e2e",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "playwright-core": "1.56.1"
+  }
+}

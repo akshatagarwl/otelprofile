@@ -1,0 +1,9 @@
+FAIL vet+lint
+PASS tests darwin (race)
+PASS fuzz 2x30s
+PASS tests linux/arm64
+PASS profcheck
+PASS collector accepts (3 batches, links present)
+PASS all 11 sample types in sigiro from both paths
+PASS resource attrs + links (otel only)
+PASS dashboard: flamegraph, label filter, diff, pyroscope data, trace->profile

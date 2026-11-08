@@ -1,0 +1,11 @@
+go version go1.27.3 linux/arm64
+ok  	github.com/akshatagarwl/otelprofile	5.988s
+?   	github.com/akshatagarwl/otelprofile/cmd/abcompare	[no test files]
+?   	github.com/akshatagarwl/otelprofile/cmd/otlpdump	[no test files]
+?   	github.com/akshatagarwl/otelprofile/internal/otlpread	[no test files]
+ok  	github.com/akshatagarwl/otelprofile/internal/transform	0.107s
+?   	github.com/akshatagarwl/otelprofile/internal/transform/oracle	[no test files]
+ok  	github.com/akshatagarwl/otelprofile/otlpprofilehttp	1.283s
+ok  	github.com/akshatagarwl/otelprofile/profile	3.656s
+ok  	github.com/akshatagarwl/otelprofile/profiletrace	0.002s
+?   	github.com/akshatagarwl/otelprofile/tools/devproxy	[no test files]

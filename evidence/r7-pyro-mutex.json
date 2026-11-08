@@ -1,0 +1,18 @@
+{
+  "title": "Dashboard · Sigiro",
+  "flamegraphTotal": "89562365140",
+  "flamegraphFrames": "169",
+  "rects": 4,
+  "topFunctions": "100",
+  "firstFunction": "sync.(*Mutex).Unlock",
+  "stats": {
+    "total": "1.49 min",
+    "stacks": "21",
+    "collections": "3",
+    "linked": "0.00%"
+  },
+  "totalNote": "Mutex wait time",
+  "filters": [],
+  "url": "http://localhost:19999/dashboard/profiles/?service=r7-types-pyro&range=15m&ptype=mutex_duration",
+  "errors": []
+}

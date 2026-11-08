@@ -1,0 +1,30 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/379 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 379/379 completed, now fuzzing with 10 workers
+fuzz: elapsed: 3s, execs: 44064 (14680/sec), new interesting: 3 (total: 382)
+fuzz: elapsed: 6s, execs: 99190 (18385/sec), new interesting: 3 (total: 382)
+fuzz: elapsed: 9s, execs: 127830 (9545/sec), new interesting: 5 (total: 384)
+fuzz: elapsed: 12s, execs: 166666 (12944/sec), new interesting: 6 (total: 385)
+fuzz: elapsed: 15s, execs: 179088 (4139/sec), new interesting: 7 (total: 386)
+fuzz: elapsed: 18s, execs: 182568 (1161/sec), new interesting: 7 (total: 386)
+fuzz: elapsed: 21s, execs: 238996 (18812/sec), new interesting: 8 (total: 387)
+fuzz: elapsed: 24s, execs: 238996 (0/sec), new interesting: 8 (total: 387)
+fuzz: elapsed: 27s, execs: 238996 (0/sec), new interesting: 8 (total: 387)
+fuzz: elapsed: 30s, execs: 238996 (0/sec), new interesting: 8 (total: 387)
+fuzz: elapsed: 31s, execs: 238996 (0/sec), new interesting: 8 (total: 387)
+PASS
+ok  	github.com/akshatagarwl/otelprofile/internal/transform	31.699s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/471 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 471/471 completed, now fuzzing with 10 workers
+fuzz: elapsed: 3s, execs: 41731 (13901/sec), new interesting: 2 (total: 473)
+fuzz: elapsed: 6s, execs: 112314 (23538/sec), new interesting: 4 (total: 475)
+fuzz: elapsed: 9s, execs: 145295 (10996/sec), new interesting: 4 (total: 475)
+fuzz: elapsed: 12s, execs: 190505 (15061/sec), new interesting: 5 (total: 476)
+fuzz: elapsed: 15s, execs: 211080 (6861/sec), new interesting: 7 (total: 478)
+fuzz: elapsed: 18s, execs: 211080 (0/sec), new interesting: 7 (total: 478)
+fuzz: elapsed: 21s, execs: 271277 (20068/sec), new interesting: 7 (total: 478)
+fuzz: elapsed: 24s, execs: 291181 (6634/sec), new interesting: 7 (total: 478)
+fuzz: elapsed: 27s, execs: 309209 (6008/sec), new interesting: 9 (total: 480)
+fuzz: elapsed: 30s, execs: 309209 (0/sec), new interesting: 9 (total: 480)
+fuzz: elapsed: 31s, execs: 309209 (0/sec), new interesting: 9 (total: 480)
+PASS
+ok  	github.com/akshatagarwl/otelprofile/internal/transform	34.452s

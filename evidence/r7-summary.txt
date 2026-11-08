@@ -1,0 +1,9 @@
+PASS fuzz 2x30s
+PASS tests darwin (race)
+PASS vet+lint
+SKIPPED tests linux/arm64 (Docker hung)
+PASS profcheck
+SKIPPED collector (Docker hung)
+PASS all 11 sample types in sigiro from both paths
+PASS resource attrs + links (otel only)
+PASS dashboard: flamegraph, label filter, diff, pyroscope data, trace->profile

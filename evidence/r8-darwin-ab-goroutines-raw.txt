@@ -1,0 +1,5 @@
+range 2026-11-08T13:28:28+05:30 .. 2026-11-08T13:38:28+05:30 (10m0s), A=r8ab-both-pyro (pyroscope-go via bridge), B=r8ab-both-otel (otelprofile OTLP)
+tolerance: totals ±10%, top-20 stack shares ±3.0 points
+
+type                      A total          B total     diff  top-N max  overlap  result
+goroutines                     80               84    +5.0%      5.06pt    16/20  FAIL

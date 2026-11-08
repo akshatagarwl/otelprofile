@@ -1,0 +1,3 @@
+${WORK:-/tmp/otelprofile-work}/otlp-dump/request-0001.pb: conformance checks passed
+${WORK:-/tmp/otelprofile-work}/otlp-dump/request-0002.pb: conformance checks passed
+${WORK:-/tmp/otelprofile-work}/otlp-dump/request-0003.pb: conformance checks passed

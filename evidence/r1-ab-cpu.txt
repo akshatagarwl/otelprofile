@@ -1,0 +1,6 @@
+range 2026-11-08T00:18:39+05:30 .. 2026-11-08T00:28:39+05:30 (10m0s), A=ab-cpu-pyroscope (pyroscope-go via bridge), B=ab-cpu-otel (otelprofile OTLP)
+tolerance: totals ±10%, top-20 stack shares ±3.0 points
+
+type                      A total          B total     diff  top-N max  overlap  result
+cpu                  102670000000      95450000000    -7.0%      1.27pt    18/20  PASS
+samples                     10267             9545    -7.0%      1.27pt    18/20  PASS

@@ -1,0 +1,18 @@
+{
+  "title": "Dashboard · Sigiro",
+  "flamegraphTotal": "45297411053.92705",
+  "flamegraphFrames": "261",
+  "rects": 68,
+  "topFunctions": "100",
+  "firstFunction": "main.spinLCG",
+  "stats": {
+    "total": "44.66 s",
+    "stacks": "29",
+    "collections": "10",
+    "linked": "0.00%"
+  },
+  "totalNote": "baseline 44.69 s (-0.1%)",
+  "filters": [],
+  "url": "http://localhost:19999/dashboard/profiles/?service=r12ab-cpu-otel&ptype=alloc_space&compare=previous&from=1794135341000&to=1794135641000",
+  "errors": []
+}

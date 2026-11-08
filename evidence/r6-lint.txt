@@ -1,0 +1,6 @@
+0 issues.
+memcheck/main.go:130:13: Error return value of `fmt.Fprintf` is not checked (errcheck)
+	fmt.Fprintf(os.Stdout, "%s: non-workload in-use heap %d KB; HeapAlloc %d KB, HeapSys %d KB, NumGC %d, TotalAlloc %d MB\n", *mode, total/1024, ms.HeapAlloc/1024, ms.HeapSys/1024, ms.NumGC, ms.TotalAlloc>>20)
+	           ^
+1 issues:
+* errcheck: 1

@@ -1,0 +1,18 @@
+{
+  "title": "Dashboard · Sigiro",
+  "flamegraphTotal": "9218963795.435684",
+  "flamegraphFrames": "362",
+  "rects": 56,
+  "topFunctions": "100",
+  "firstFunction": "main.allocLarge",
+  "stats": {
+    "total": "8.51 GiB",
+    "stacks": "76",
+    "collections": "300",
+    "linked": "0.00%"
+  },
+  "totalNote": "baseline 2.69 GiB (+216.7%)",
+  "filters": [],
+  "url": "http://localhost:19999/dashboard/profiles/?service=amp6-otel&ptype=alloc_space&compare=previous&from=1794085499000&to=1794085799000",
+  "errors": []
+}

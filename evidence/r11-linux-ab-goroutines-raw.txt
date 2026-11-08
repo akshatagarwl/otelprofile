@@ -1,0 +1,5 @@
+range 2026-11-08T16:00:37+05:30 .. 2026-11-08T16:10:37+05:30 (10m0s), A=r11lab-both-pyro (pyroscope-go via bridge), B=r11lab-both-otel (otelprofile OTLP)
+tolerance: totals ±10%, top-20 stack shares ±3.0 points
+
+type                      A total          B total     diff  top-N max  overlap  result
+goroutines                     80               80    +0.1%      0.32pt    19/20  PASS
