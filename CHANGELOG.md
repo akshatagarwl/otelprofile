@@ -23,6 +23,9 @@ format follows the upstream development revision.
 - README: screenshots of real profiles (sigiro, Grafana Pyroscope, trace to
   span profile) and animated diagrams of the export pipeline, trace links,
   the OTLP dictionary and overhead. Sources in `docs/assets/src`.
+- `docs/vs-ebpf.md`: measured comparison with the OpenTelemetry eBPF
+  profiler on the same Go app, with Pyroscope screenshots. Scripts in
+  `scripts/vs-ebpf`, evidence in `evidence/vs-ebpf`.
 
 ## v0.2.0 — 2026-11-08
 
