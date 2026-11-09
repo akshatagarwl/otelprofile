@@ -4,6 +4,23 @@ All notable changes to this module. Versions follow semantic versioning;
 before 1.0 minor versions may break the API, and the OTLP Profiles wire
 format follows the upstream development revision.
 
+## Unreleased
+
+### Added
+
+- OTLP HTTP compression choices: Zstandard, zlib, deflate, Snappy block,
+  framed Snappy, LZ4 frames, and Brotli. Configure them with `WithCompression`
+  or `OTEL_EXPORTER_OTLP_[PROFILES_]COMPRESSION`. The default remains none.
+  The new encodings require receiver support. See
+  [compression](docs/compression.md).
+
+### Changed
+
+- Unknown compression values now fail exporter construction instead of
+  silently sending uncompressed data. Explicit options still override the
+  environment. The exporter owns `Content-Encoding`, so custom headers
+  cannot mislabel the request body.
+
 ## v0.3.0 — 2026-11-09
 
 ### Breaking

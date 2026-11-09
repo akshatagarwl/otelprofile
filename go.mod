@@ -3,10 +3,13 @@ module github.com/akshatagarwl/otelprofile-go
 go 1.26.0
 
 require (
+	github.com/andybalholm/brotli v1.2.8
+	github.com/golang/snappy v1.0.0
 	github.com/google/pprof v0.0.0-20261105003125-4bf881d7fb0b
 	github.com/grafana/pyroscope-go/godeltaprof v0.1.12
 	github.com/klauspost/compress v1.18.6
 	github.com/open-telemetry/sig-profiling/profcheck v0.0.0-20261105100351-668bf42ffd45
+	github.com/pierrec/lz4/v4 v4.1.33
 	go.opentelemetry.io/otel v1.47.0
 	go.opentelemetry.io/otel/sdk v1.47.0
 	go.opentelemetry.io/otel/trace v1.47.0

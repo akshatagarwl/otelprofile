@@ -14,6 +14,8 @@ docker run -d --name otelprofile-ci-collector -p 127.0.0.1:4318:4318 \
   "$image" --config /etc/otelcol-contrib/config.yaml --feature-gates=service.profilesSupport > /dev/null
 trap 'docker logs otelprofile-ci-collector > "$here/collector.log" 2>&1; docker rm -f otelprofile-ci-collector > /dev/null' EXIT
 for _ in $(seq 30); do docker logs otelprofile-ci-collector 2>&1 | grep -q "Everything is ready" && break; sleep 1; done
+(cd "$here" && OTELPROFILE_COMPRESSION_TEST_ENDPOINT=http://localhost:4318 \
+  go test ./otlpprofilehttp -run TestCollectorCompression -v -count=1)
 (cd "$here/examples/demo" && go run . -profiler=otel -service=ci-collector -endpoint=http://localhost:4318 \
   -duration=25s -interval=10s -types=all 2>&1 | grep -v "traces export" || true)
 sleep 2

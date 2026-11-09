@@ -33,6 +33,20 @@ const (
 	GzipCompression Compression = iota
 	// NoCompression sends bodies as-is (default, as in the OTLP exporter spec).
 	NoCompression
+	// ZstdCompression uses Zstandard frames.
+	ZstdCompression
+	// ZlibCompression uses zlib-wrapped DEFLATE with Content-Encoding: zlib.
+	ZlibCompression
+	// DeflateCompression uses zlib-wrapped DEFLATE with Content-Encoding: deflate.
+	DeflateCompression
+	// SnappyCompression uses the Snappy block format.
+	SnappyCompression
+	// SnappyFramedCompression uses the Snappy framing format.
+	SnappyFramedCompression
+	// LZ4Compression uses the LZ4 frame format.
+	LZ4Compression
+	// BrotliCompression uses Brotli with Content-Encoding: br.
+	BrotliCompression
 )
 
 // RetryConfig controls retries of retryable responses (429, 502, 503, 504)
@@ -102,6 +116,7 @@ func WithHeaders(h map[string]string) Option {
 }
 
 // WithCompression sets body compression (default none, per the OTLP spec).
+// Encodings other than none and gzip require support from the receiver.
 func WithCompression(cmp Compression) Option { return func(c *config) { c.compression = cmp } }
 
 // WithTLSClientConfig sets the TLS configuration.
@@ -185,12 +200,7 @@ func (c *config) fromEnv() {
 		}
 	}
 	if v, ok := get("OTEL_EXPORTER_OTLP_PROFILES_COMPRESSION", "OTEL_EXPORTER_OTLP_COMPRESSION"); ok {
-		switch strings.ToLower(v) {
-		case "gzip":
-			c.compression = GzipCompression
-		case "none":
-			c.compression = NoCompression
-		}
+		c.compression = parseCompression(v)
 	}
 	if v, ok := get("OTEL_EXPORTER_OTLP_PROFILES_CERTIFICATE", "OTEL_EXPORTER_OTLP_CERTIFICATE"); ok {
 		pem, err := os.ReadFile(v)
