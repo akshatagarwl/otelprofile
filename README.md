@@ -220,7 +220,7 @@ then checked stock Ubuntu kernels on x86-64 and arm64:
 |---|---|---|
 | Profiles | CPU, heap, goroutine, mutex, block | CPU, native off-CPU |
 | CPU profiled ÷ CPU used (Ubuntu) | 98.7–98.9 % | 93.3–99.6 % at 97 Hz |
-| `main.burn` caller in these runs | kept | dropped on both architectures |
+| Hot leaf's caller (`burn`) | kept | dropped on both architectures |
 | Span links | application spans | OBI-generated HTTP processing spans |
 | Inlined Go frames | retained | sparse in these runs |
 | Kernel frames, other languages, no rebuild | no | yes |

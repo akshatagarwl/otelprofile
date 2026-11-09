@@ -45,6 +45,8 @@ Each directory contains:
 * `summary.md`: regenerated readable summary of those audited reports.
 
 Quality ran 300 s, off-CPU and each rate/overhead probe 120 s, OBI 180 s.
+Off-CPU used `threshold: 0.1` (10% capture probability); reported duration sums
+are sampled observations, not extrapolated totals of all native-thread waits.
 The control rounds use the same plain binary with no eBPF / eBPF 97 / eBPF 20,
 in that order, repeated three times; they are not randomized or blinded.
 

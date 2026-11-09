@@ -155,8 +155,10 @@ Ubuntu runners it started on the first attempt and produced nonzero `off_cpu/nan
 | nanosleep, share of duration | 10.4 % | 14.8 % |
 
 These are **native-thread** waits, with kernel frames and Go runtime/user
-frames further down the stack. Duration is summed over threads and can exceed
-wall time. This is real additional visibility that otelprofile does not offer.
+frames further down the stack. The extension's `threshold: 0.1` is a **10 %
+capture probability**: these exported durations are sampled observations,
+not a ground-truth total of all waits. They are not extrapolated here. Duration
+is summed over threads and can exceed wall time. This is real additional visibility that otelprofile does not offer.
 It is not equivalent to Go mutex/block profiles: sleeping goroutines can be
 parked while an OS thread runs another goroutine, so thread off-CPU time is
 not a complete goroutine-wait accounting system.
