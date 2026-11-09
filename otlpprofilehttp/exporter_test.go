@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/profile"
+	"github.com/akshatagarwl/otelprofile-go/profile"
 	"github.com/open-telemetry/sig-profiling/profcheck"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/sdk/instrumentation"

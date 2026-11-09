@@ -1,11 +1,11 @@
-module github.com/akshatagarwl/otelprofile/examples/demo
+module github.com/akshatagarwl/otelprofile-go/examples/demo
 
 go 1.26.0
 
-replace github.com/akshatagarwl/otelprofile => ../..
+replace github.com/akshatagarwl/otelprofile-go => ../..
 
 require (
-	github.com/akshatagarwl/otelprofile v0.0.0-00010101000000-000000000000
+	github.com/akshatagarwl/otelprofile-go v0.0.0-00010101000000-000000000000
 	github.com/google/pprof v0.0.0-20261105003125-4bf881d7fb0b
 	github.com/grafana/pyroscope-go v1.4.3
 	go.opentelemetry.io/otel v1.47.0

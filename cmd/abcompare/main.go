@@ -90,7 +90,7 @@ var exclude = flag.Bool("exclude-profiler-goroutines", true, "drop the profilers
 // other's (pyroscope-go keeps five upload workers; an upload has transport
 // and dial goroutines), so they are left out of the comparison on both sides.
 func profilerGoroutine(st string) bool {
-	for _, f := range []string{"github.com/grafana/pyroscope-go", "github.com/akshatagarwl/otelprofile",
+	for _, f := range []string{"github.com/grafana/pyroscope-go", "github.com/akshatagarwl/otelprofile-go",
 		"net/http.(*persistConn).roundTrip", "net/http.(*Transport).getConn", "net.(*sysDialer)", "net/http.(*Transport).dialConn"} {
 		if strings.Contains(st, f) {
 			return true
@@ -143,7 +143,7 @@ func normalize(st string) string {
 	frames := strings.Split(st, ";")
 	out := frames[:0]
 	for _, f := range frames {
-		if strings.HasPrefix(f, "github.com/akshatagarwl/otelprofile") || strings.HasPrefix(f, "github.com/grafana/pyroscope-go") {
+		if strings.HasPrefix(f, "github.com/akshatagarwl/otelprofile-go") || strings.HasPrefix(f, "github.com/grafana/pyroscope-go") {
 			continue
 		}
 		out = append(out, f)

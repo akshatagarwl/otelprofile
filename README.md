@@ -9,7 +9,7 @@ trace and span that produced them.
   <br><sub>Fifteen minutes of <code>examples/demo</code> CPU time, as sent by otelprofile, in <a href="https://sigiro.com">sigiro</a>.</sub>
 </p>
 
-> **Status: v0.2.0, experimental.** OTLP Profiles is still a *development*
+> **Status: v0.3.0, experimental.** OTLP Profiles is still a *development*
 > signal (`/v1development/profiles`, opentelemetry-proto v1.10+ layout,
 > profiles development revision 1). The wire format will change before it is
 > stable, and so may this module's API.
@@ -66,7 +66,7 @@ You need Go 1.26+ and Docker.
    	"log"
    	"time"
 
-   	"github.com/akshatagarwl/otelprofile"
+   	"github.com/akshatagarwl/otelprofile-go"
    )
 
    func main() {
@@ -97,7 +97,7 @@ You need Go 1.26+ and Docker.
 
    ```sh
    go mod init quickstart
-   go get github.com/akshatagarwl/otelprofile@v0.2.0
+   go get github.com/akshatagarwl/otelprofile-go@v0.3.0
    go run .
    ```
 

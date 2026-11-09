@@ -21,7 +21,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile"
+	"github.com/akshatagarwl/otelprofile-go"
 	"github.com/google/pprof/profile"
 	"github.com/grafana/pyroscope-go"
 )

@@ -282,9 +282,9 @@ func TestGoroutineAndCPUMatchGroundTruth(t *testing.T) {
 			for _, l := range s.Location {
 				for _, ln := range l.Line {
 					switch ln.Function.Name {
-					case "github.com/akshatagarwl/otelprofile/profile.parkedForTest":
+					case "github.com/akshatagarwl/otelprofile-go/profile.parkedForTest":
 						parked += v
-					case "github.com/akshatagarwl/otelprofile/profile.spin":
+					case "github.com/akshatagarwl/otelprofile-go/profile.spin":
 						spun += v
 					}
 				}

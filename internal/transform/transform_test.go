@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"flag"
-	"github.com/akshatagarwl/otelprofile/internal/transform"
-	"github.com/akshatagarwl/otelprofile/internal/transform/oracle"
+	"github.com/akshatagarwl/otelprofile-go/internal/transform"
+	"github.com/akshatagarwl/otelprofile-go/internal/transform/oracle"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/internal/otlpread"
+	"github.com/akshatagarwl/otelprofile-go/internal/otlpread"
 	"github.com/google/pprof/profile"
 	"github.com/open-telemetry/sig-profiling/profcheck"
 	collpb "go.opentelemetry.io/proto/otlp/collector/profiles/v1development"
@@ -28,7 +28,7 @@ func testResource() *resourcepb.Resource {
 }
 
 func testScope() *commonpb.InstrumentationScope {
-	return &commonpb.InstrumentationScope{Name: "github.com/akshatagarwl/otelprofile/profile", Version: "test"}
+	return &commonpb.InstrumentationScope{Name: "github.com/akshatagarwl/otelprofile-go/profile", Version: "test"}
 }
 
 func seqIDs() func() []byte {

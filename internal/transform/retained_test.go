@@ -1,7 +1,7 @@
 package transform_test
 
 import (
-	"github.com/akshatagarwl/otelprofile/internal/transform"
+	"github.com/akshatagarwl/otelprofile-go/internal/transform"
 	"runtime"
 	"testing"
 	"time"

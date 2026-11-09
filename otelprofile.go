@@ -31,8 +31,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/otlpprofilehttp"
-	"github.com/akshatagarwl/otelprofile/profile"
+	"github.com/akshatagarwl/otelprofile-go/otlpprofilehttp"
+	"github.com/akshatagarwl/otelprofile-go/profile"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/sdk/resource"
 )

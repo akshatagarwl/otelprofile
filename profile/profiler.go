@@ -19,7 +19,7 @@ import (
 )
 
 // ScopeName is the instrumentation scope reported with every profile.
-const ScopeName = "github.com/akshatagarwl/otelprofile/profile"
+const ScopeName = "github.com/akshatagarwl/otelprofile-go/profile"
 
 // Version is this module's version.
 const Version = "0.1.0"

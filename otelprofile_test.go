@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile"
-	"github.com/akshatagarwl/otelprofile/internal/otlpread"
+	"github.com/akshatagarwl/otelprofile-go"
+	"github.com/akshatagarwl/otelprofile-go/internal/otlpread"
 	collpb "go.opentelemetry.io/proto/otlp/collector/profiles/v1development"
 	"google.golang.org/protobuf/proto"
 )

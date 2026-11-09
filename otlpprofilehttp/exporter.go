@@ -17,8 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/internal/transform"
-	"github.com/akshatagarwl/otelprofile/profile"
+	"github.com/akshatagarwl/otelprofile-go/internal/transform"
+	"github.com/akshatagarwl/otelprofile-go/profile"
 	"github.com/klauspost/compress/gzip"
 	"go.opentelemetry.io/otel/sdk/instrumentation"
 	"go.opentelemetry.io/otel/sdk/resource"

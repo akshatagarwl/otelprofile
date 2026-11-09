@@ -2,12 +2,12 @@ package transform_test
 
 import (
 	"bytes"
-	"github.com/akshatagarwl/otelprofile/internal/transform"
-	"github.com/akshatagarwl/otelprofile/internal/transform/oracle"
+	"github.com/akshatagarwl/otelprofile-go/internal/transform"
+	"github.com/akshatagarwl/otelprofile-go/internal/transform/oracle"
 	"testing"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/internal/otlpread"
+	"github.com/akshatagarwl/otelprofile-go/internal/otlpread"
 	"github.com/google/pprof/profile"
 	collpb "go.opentelemetry.io/proto/otlp/collector/profiles/v1development"
 	"google.golang.org/protobuf/proto"

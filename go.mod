@@ -1,4 +1,4 @@
-module github.com/akshatagarwl/otelprofile
+module github.com/akshatagarwl/otelprofile-go
 
 go 1.26.0
 

@@ -19,9 +19,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/otlpprofilehttp"
-	"github.com/akshatagarwl/otelprofile/profile"
-	"github.com/akshatagarwl/otelprofile/profiletrace"
+	"github.com/akshatagarwl/otelprofile-go/otlpprofilehttp"
+	"github.com/akshatagarwl/otelprofile-go/profile"
+	"github.com/akshatagarwl/otelprofile-go/profiletrace"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/sdk/instrumentation"
 	"go.opentelemetry.io/otel/sdk/resource"

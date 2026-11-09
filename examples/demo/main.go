@@ -29,7 +29,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/profile"
+	"github.com/akshatagarwl/otelprofile-go/profile"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"

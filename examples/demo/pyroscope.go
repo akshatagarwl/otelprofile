@@ -6,7 +6,7 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/akshatagarwl/otelprofile/profile"
+	"github.com/akshatagarwl/otelprofile-go/profile"
 	"github.com/grafana/pyroscope-go"
 )
 

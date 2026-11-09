@@ -11,7 +11,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/internal/transform"
+	"github.com/akshatagarwl/otelprofile-go/internal/transform"
 	"github.com/google/pprof/profile"
 	collpb "go.opentelemetry.io/proto/otlp/collector/profiles/v1development"
 	commonpb "go.opentelemetry.io/proto/otlp/common/v1"

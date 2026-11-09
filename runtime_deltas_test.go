@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/akshatagarwl/otelprofile/otlpprofilehttp"
-	"github.com/akshatagarwl/otelprofile/profile"
+	"github.com/akshatagarwl/otelprofile-go/otlpprofilehttp"
+	"github.com/akshatagarwl/otelprofile-go/profile"
 )
 
 var deltaSink [][]byte
