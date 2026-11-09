@@ -1,0 +1,34 @@
+2026/11/09 12:03:18 INFO otelprofile started service=demo endpoint=http://vs-hub:4318/v1development/profiles types="[cpu heap goroutine mutex block]"
+2026/11/09 12:03:18 INFO demo running service=demo addr=http://127.0.0.1:44761
+{"stats":"periodic","profiler":"otel","uptime_s":60,"cpu_s":11.931,"maxrss_mb":38.6,"alloc_mb":1721.9,"alloc_objects":763642,"gc_cycles":188,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":13.4,"free":7.6,"released":8.4,"stacks":1.1,"prof_buckets":1.4,"meta_other":3.1,"other":1.7,"heap_goal":22.6,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":120,"cpu_s":23.651,"maxrss_mb":38.6,"alloc_mb":3431.4,"alloc_objects":1522729,"gc_cycles":362,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":16.8,"free":2.0,"released":10.4,"stacks":1.1,"prof_buckets":1.4,"meta_other":3.1,"other":1.6,"heap_goal":18.0,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":180,"cpu_s":35.700,"maxrss_mb":38.6,"alloc_mb":5139.5,"alloc_objects":2280948,"gc_cycles":539,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":19.0,"free":1.0,"released":8.7,"stacks":1.1,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":20.4,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":240,"cpu_s":47.180,"maxrss_mb":38.6,"alloc_mb":6855.2,"alloc_objects":3041510,"gc_cycles":714,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":18.1,"free":1.8,"released":9.2,"stacks":1.1,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":19.1,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":300,"cpu_s":56.807,"maxrss_mb":38.6,"alloc_mb":8575.5,"alloc_objects":3802845,"gc_cycles":891,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":16.6,"free":4.6,"released":8.0,"stacks":1.1,"prof_buckets":1.4,"meta_other":3.1,"other":1.6,"heap_goal":20.1,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":360,"cpu_s":66.538,"maxrss_mb":38.6,"alloc_mb":10295.5,"alloc_objects":4564245,"gc_cycles":1063,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":14.8,"free":5.2,"released":9.2,"stacks":1.1,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":19.2,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":420,"cpu_s":76.207,"maxrss_mb":38.6,"alloc_mb":12017.7,"alloc_objects":5327736,"gc_cycles":1239,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":14.8,"free":7.2,"released":6.8,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":22.9,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":480,"cpu_s":85.913,"maxrss_mb":38.6,"alloc_mb":13738.4,"alloc_objects":6088631,"gc_cycles":1412,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":13.8,"free":5.0,"released":10.1,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":18.2,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":540,"cpu_s":96.226,"maxrss_mb":38.6,"alloc_mb":15460.2,"alloc_objects":6851389,"gc_cycles":1586,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":16.5,"free":3.0,"released":9.1,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":20.8,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":600,"cpu_s":106.780,"maxrss_mb":38.6,"alloc_mb":17180.8,"alloc_objects":7614408,"gc_cycles":1764,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":14.6,"free":7.1,"released":7.1,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":20.9,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":660,"cpu_s":117.194,"maxrss_mb":38.6,"alloc_mb":18901.1,"alloc_objects":8374333,"gc_cycles":1938,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":15.8,"free":7.9,"released":5.4,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":24.5,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":720,"cpu_s":127.426,"maxrss_mb":38.6,"alloc_mb":20621.9,"alloc_objects":9135740,"gc_cycles":2109,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":17.5,"free":6.2,"released":5.3,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":19.8,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":780,"cpu_s":137.019,"maxrss_mb":38.6,"alloc_mb":22342.9,"alloc_objects":9897264,"gc_cycles":2281,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":19.3,"free":0.6,"released":9.1,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":24.5,"goroutines":90}
+{"stats":"periodic","profiler":"otel","uptime_s":840,"cpu_s":146.625,"maxrss_mb":38.6,"alloc_mb":24064.2,"alloc_objects":10659118,"gc_cycles":2456,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":13.0,"free":6.1,"released":9.9,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":19.3,"goroutines":90}
+{"stats":"exit","profiler":"otel","uptime_s":900,"cpu_s":156.263,"maxrss_mb":38.6,"alloc_mb":25785.6,"alloc_objects":11421493,"gc_cycles":2632,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":12.1,"free":10.7,"released":6.2,"stacks":1.2,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":22.4,"goroutines":27}
+{"stats":"periodic","profiler":"otel","uptime_s":900,"cpu_s":156.266,"maxrss_mb":38.6,"alloc_mb":25787.6,"alloc_objects":11423886,"gc_cycles":2632,"runtime_mem_mb":38.4}
+{"mem_detail":"otel","objects":14.2,"free":8.2,"released":6.2,"stacks":1.3,"prof_buckets":1.4,"meta_other":3.2,"other":1.6,"heap_goal":22.4,"goroutines":25}

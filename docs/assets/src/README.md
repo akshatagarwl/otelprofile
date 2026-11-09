@@ -16,3 +16,5 @@ npm run build
 The numbers in `overhead.svg` are round 13 of `ROUNDS.md` (linux/arm64
 container). The screenshots (`*.png`) are captures of `examples/demo`
 sending to a local sigiro and to Grafana Pyroscope 2.4.3.
+The `vs-ebpf-*.png` captures come from `scripts/vs-ebpf` and
+`e2e/pyroscope.mjs` (see `docs/vs-ebpf.md`).

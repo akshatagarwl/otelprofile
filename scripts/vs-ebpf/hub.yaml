@@ -1,0 +1,24 @@
+# Receives profiles from both sides, keeps a raw copy and forwards them to
+# Pyroscope, so both land in the same backend through the same path.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+exporters:
+  otlp_http/pyroscope:
+    endpoint: http://vs-pyroscope:4040
+  file/raw:
+    path: /out/profiles.jsonl
+    format: json
+  nop:
+service:
+  pipelines:
+    profiles:
+      receivers: [otlp]
+      exporters: [otlp_http/pyroscope, file/raw]
+    traces:
+      receivers: [otlp]
+      exporters: [nop]

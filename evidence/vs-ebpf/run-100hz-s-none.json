@@ -1,0 +1,673 @@
+{
+ "ebpf:samples": {
+  "unit": "count",
+  "samples": 10774,
+  "value": 107740000000,
+  "distinct_stacks": 9994,
+  "frames_per_stack": 11.5,
+  "max_depth": 47,
+  "inline_frames": 0,
+  "unknown_frames": 104,
+  "kernel_frames": 7470,
+  "pct_with_endpoint_label": 74.4,
+  "pct_linked_to_span": 0.0,
+  "sample_attribute_keys": [
+   "cpu.logical_number",
+   "process.context.label.endpoint",
+   "thread.id",
+   "thread.name"
+  ],
+  "resource_keys": [
+   "container.id",
+   "process.executable.name",
+   "process.executable.path",
+   "process.pid"
+  ],
+  "top_self_pct": [
+   [
+    "main.spinLCG",
+    73.7
+   ],
+   [
+    "schedule",
+    2.2
+   ],
+   [
+    "_raw_spin_unlock_irqrestore",
+    1.6
+   ],
+   [
+    "wake_up_q",
+    1.0
+   ],
+   [
+    "[unknown]",
+    0.9
+   ],
+   [
+    "runtime.stealWork",
+    0.7
+   ],
+   [
+    "runtime.unlock2",
+    0.6
+   ],
+   [
+    "runtime.tryDeferToSpanScan",
+    0.5
+   ]
+  ],
+  "spinLCG_by_caller_pct": {
+   "main.queryDB": 62.1,
+   "main.fastHandler": 22.3,
+   "main.renderPage": 15.6
+  }
+ },
+ "otelprofile:alloc_objects": {
+  "unit": "count",
+  "samples": 11500896,
+  "value": 11500896,
+  "distinct_stacks": 1124,
+  "frames_per_stack": 7.0,
+  "max_depth": 20,
+  "inline_frames": 608,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 0.0,
+  "pct_linked_to_span": 0.0,
+  "sample_attribute_keys": [
+   "bytes"
+  ],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "main.allocSmall",
+    79.1
+   ],
+   [
+    "internal/runtime/maps.NewEmptyMap",
+    1.0
+   ],
+   [
+    "context.WithValue",
+    0.9
+   ],
+   [
+    "main.allocLarge",
+    0.8
+   ],
+   [
+    "go.opentelemetry.io/otel/exporters/otlp/otlptrace/internal/tracetransform.span",
+    0.8
+   ],
+   [
+    "internal/runtime/maps.newarray",
+    0.8
+   ],
+   [
+    "runtime/pprof.Labels",
+    0.7
+   ],
+   [
+    "github.com/grafana/pyroscope-go/godeltaprof/internal/pprof.(*profileBuilder).emitLocation",
+    0.6
+   ]
+  ],
+  "spinLCG_by_caller_pct": {}
+ },
+ "otelprofile:alloc_space": {
+  "unit": "bytes",
+  "samples": 27013257434,
+  "value": 27013257434,
+  "distinct_stacks": 1124,
+  "frames_per_stack": 7.0,
+  "max_depth": 20,
+  "inline_frames": 608,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 0.0,
+  "pct_linked_to_span": 0.0,
+  "sample_attribute_keys": [
+   "bytes"
+  ],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "main.allocLarge",
+    87.1
+   ],
+   [
+    "main.allocSmall",
+    4.3
+   ],
+   [
+    "main.renderPage",
+    4.3
+   ],
+   [
+    "main.keep",
+    2.5
+   ],
+   [
+    "io.init.func1",
+    0.2
+   ],
+   [
+    "main.fastHandler",
+    0.2
+   ],
+   [
+    "internal/runtime/maps.newarray",
+    0.2
+   ],
+   [
+    "runtime/pprof.StartCPUProfile",
+    0.1
+   ]
+  ],
+  "spinLCG_by_caller_pct": {}
+ },
+ "otelprofile:contentions": {
+  "unit": "count",
+  "samples": 1267199,
+  "value": 1267199,
+  "distinct_stacks": 1946,
+  "frames_per_stack": 6.6,
+  "max_depth": 22,
+  "inline_frames": 979,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 0.0,
+  "pct_linked_to_span": 0.0,
+  "sample_attribute_keys": [],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "runtime.selectgo",
+    31.6
+   ],
+   [
+    "sync.(*Mutex).Unlock",
+    25.5
+   ],
+   [
+    "sync.(*Mutex).Lock",
+    25.5
+   ],
+   [
+    "runtime.chanrecv1",
+    8.5
+   ],
+   [
+    "runtime.chanrecv2",
+    7.1
+   ],
+   [
+    "sync.(*Cond).Wait",
+    1.4
+   ],
+   [
+    "runtime.unlock",
+    0.3
+   ],
+   [
+    "runtime._LostContendedRuntimeLock",
+    0.0
+   ]
+  ],
+  "spinLCG_by_caller_pct": {}
+ },
+ "otelprofile:cpu": {
+  "unit": "nanoseconds",
+  "samples": 173490000000,
+  "value": 173490000000,
+  "distinct_stacks": 16154,
+  "frames_per_stack": 10.3,
+  "max_depth": 31,
+  "inline_frames": 2232,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 84.9,
+  "pct_linked_to_span": 85.2,
+  "sample_attribute_keys": [
+   "endpoint"
+  ],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "main.spinLCG",
+    84.5
+   ],
+   [
+    "runtime.futex",
+    1.7
+   ],
+   [
+    "internal/runtime/syscall/linux.Syscall6",
+    1.3
+   ],
+   [
+    "runtime.tryDeferToSpanScan",
+    0.6
+   ],
+   [
+    "runtime.unlock2",
+    0.5
+   ],
+   [
+    "runtime.memclrNoHeapPointers",
+    0.5
+   ],
+   [
+    "runtime.nanotime",
+    0.4
+   ],
+   [
+    "runtime.scanObject",
+    0.4
+   ]
+  ],
+  "spinLCG_by_caller_pct": {
+   "main.fastHandler": 45.8,
+   "main.queryDB": 41.9,
+   "main.renderPage": 12.3
+  }
+ },
+ "otelprofile:delay": {
+  "unit": "nanoseconds",
+  "samples": 62872751974183,
+  "value": 62872751974183,
+  "distinct_stacks": 1946,
+  "frames_per_stack": 6.6,
+  "max_depth": 22,
+  "inline_frames": 979,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 0.0,
+  "pct_linked_to_span": 0.0,
+  "sample_attribute_keys": [],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "runtime.chanrecv1",
+    73.7
+   ],
+   [
+    "runtime.selectgo",
+    11.5
+   ],
+   [
+    "sync.(*Mutex).Unlock",
+    5.5
+   ],
+   [
+    "sync.(*Mutex).Lock",
+    4.3
+   ],
+   [
+    "runtime.chanrecv2",
+    3.6
+   ],
+   [
+    "sync.(*WaitGroup).Wait",
+    1.4
+   ],
+   [
+    "runtime.unlock",
+    0.0
+   ],
+   [
+    "sync.(*Cond).Wait",
+    0.0
+   ]
+  ],
+  "spinLCG_by_caller_pct": {}
+ },
+ "otelprofile:goroutine": {
+  "unit": "count",
+  "samples": 4454,
+  "value": 4454,
+  "distinct_stacks": 1193,
+  "frames_per_stack": 6.0,
+  "max_depth": 14,
+  "inline_frames": 476,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 0.1,
+  "pct_linked_to_span": 0.1,
+  "sample_attribute_keys": [
+   "endpoint"
+  ],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "runtime.gopark",
+    95.7
+   ],
+   [
+    "runtime.notetsleepg",
+    2.0
+   ],
+   [
+    "runtime.goroutineProfileWithLabels",
+    1.3
+   ],
+   [
+    "syscall.Syscall6",
+    0.2
+   ],
+   [
+    "runtime.asyncPreempt2",
+    0.1
+   ],
+   [
+    "runtime.goyield",
+    0.1
+   ],
+   [
+    "runtime.makeslice",
+    0.0
+   ],
+   [
+    "main.keep",
+    0.0
+   ]
+  ],
+  "spinLCG_by_caller_pct": {}
+ },
+ "otelprofile:inuse_objects": {
+  "unit": "count",
+  "samples": 612412,
+  "value": 612412,
+  "distinct_stacks": 856,
+  "frames_per_stack": 9.0,
+  "max_depth": 20,
+  "inline_frames": 526,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 0.0,
+  "pct_linked_to_span": 0.0,
+  "sample_attribute_keys": [
+   "bytes"
+  ],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "main.parked",
+    45.9
+   ],
+   [
+    "main.allocSmall",
+    23.4
+   ],
+   [
+    "runtime.mallocgc",
+    18.2
+   ],
+   [
+    "go.opentelemetry.io/otel/trace.TraceID.String",
+    8.0
+   ],
+   [
+    "go.opentelemetry.io/otel/sdk/trace.(*recordingSpan).snapshot",
+    1.6
+   ],
+   [
+    "runtime/metrics.init.0",
+    0.8
+   ],
+   [
+    "runtime/pprof.mergeLabelSets",
+    0.7
+   ],
+   [
+    "internal/runtime/maps.newarray",
+    0.5
+   ]
+  ],
+  "spinLCG_by_caller_pct": {}
+ },
+ "otelprofile:inuse_space": {
+  "unit": "bytes",
+  "samples": 830525002,
+  "value": 830525002,
+  "distinct_stacks": 856,
+  "frames_per_stack": 9.0,
+  "max_depth": 20,
+  "inline_frames": 526,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 0.0,
+  "pct_linked_to_span": 0.0,
+  "sample_attribute_keys": [
+   "bytes"
+  ],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "main.allocLarge",
+    36.3
+   ],
+   [
+    "runtime.mallocgc",
+    15.2
+   ],
+   [
+    "github.com/klauspost/compress/flate.NewWriter",
+    9.7
+   ],
+   [
+    "runtime/pprof.StartCPUProfile",
+    9.3
+   ],
+   [
+    "github.com/klauspost/compress/flate.(*fastGen).addBlock",
+    5.1
+   ],
+   [
+    "github.com/klauspost/compress/flate.newFastEnc",
+    4.3
+   ],
+   [
+    "runtime/metrics.init.0",
+    3.8
+   ],
+   [
+    "main.parked",
+    3.8
+   ]
+  ],
+  "spinLCG_by_caller_pct": {}
+ },
+ "otelprofile:samples": {
+  "unit": "count",
+  "samples": 17349,
+  "value": 17349,
+  "distinct_stacks": 16154,
+  "frames_per_stack": 10.3,
+  "max_depth": 31,
+  "inline_frames": 2232,
+  "unknown_frames": 0,
+  "kernel_frames": 0,
+  "pct_with_endpoint_label": 84.9,
+  "pct_linked_to_span": 85.2,
+  "sample_attribute_keys": [
+   "endpoint"
+  ],
+  "resource_keys": [
+   "deployment.environment.name",
+   "host.name",
+   "os.description",
+   "os.type",
+   "process.executable.name",
+   "process.pid",
+   "process.runtime.name",
+   "process.runtime.version",
+   "region",
+   "service.instance.id",
+   "service.name",
+   "telemetry.sdk.language",
+   "telemetry.sdk.name",
+   "telemetry.sdk.version"
+  ],
+  "top_self_pct": [
+   [
+    "main.spinLCG",
+    84.5
+   ],
+   [
+    "runtime.futex",
+    1.7
+   ],
+   [
+    "internal/runtime/syscall/linux.Syscall6",
+    1.3
+   ],
+   [
+    "runtime.tryDeferToSpanScan",
+    0.6
+   ],
+   [
+    "runtime.unlock2",
+    0.5
+   ],
+   [
+    "runtime.memclrNoHeapPointers",
+    0.5
+   ],
+   [
+    "runtime.nanotime",
+    0.4
+   ],
+   [
+    "runtime.scanObject",
+    0.4
+   ]
+  ],
+  "spinLCG_by_caller_pct": {
+   "main.fastHandler": 45.8,
+   "main.queryDB": 41.9,
+   "main.renderPage": 12.3
+  }
+ }
+}
