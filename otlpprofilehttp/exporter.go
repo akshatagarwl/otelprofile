@@ -19,7 +19,6 @@ import (
 
 	"github.com/akshatagarwl/otelprofile-go/internal/transform"
 	"github.com/akshatagarwl/otelprofile-go/profile"
-	"github.com/klauspost/compress/gzip"
 	"go.opentelemetry.io/otel/sdk/instrumentation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"google.golang.org/protobuf/encoding/protowire"
@@ -65,6 +64,9 @@ func New(_ context.Context, opts ...Option) (*Exporter, error) {
 	}
 	if c.err != nil {
 		return nil, c.err
+	}
+	if _, ok := compressionCodecs[c.compression]; !ok {
+		return nil, fmt.Errorf("unsupported OTLP compression %d", c.compression)
 	}
 	if c.maxBytes <= 0 {
 		c.maxBytes = DefaultMaxRequestBytes
@@ -165,28 +167,6 @@ func (e *Exporter) encode(res *resource.Resource, scope instrumentation.Scope, r
 	return errors.Join(errs...)
 }
 
-// encode gzips body. Stateless compression keeps no deflate state between
-// requests (a stateful writer retains about a megabyte), at a small cost in
-// ratio; profiles compress well either way.
-func (e *Exporter) compress(body []byte) ([]byte, error) {
-	if e.cfg.compression != GzipCompression {
-		return body, nil
-	}
-	var buf bytes.Buffer
-	buf.Grow(len(body) / 3)
-	zw, err := gzip.NewWriterLevel(&buf, gzip.StatelessCompression)
-	if err != nil {
-		return nil, err
-	}
-	if _, err := zw.Write(body); err != nil {
-		return nil, err
-	}
-	if err := zw.Close(); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
 type retryableError struct {
 	err   error
 	after time.Duration
@@ -195,7 +175,7 @@ type retryableError struct {
 func (r *retryableError) Error() string { return r.err.Error() }
 
 func (e *Exporter) send(ctx context.Context, raw []byte) error {
-	body, err := e.compress(raw)
+	body, err := compressionCodecs[e.cfg.compression].encode(raw)
 	if err != nil {
 		return fmt.Errorf("compress: %w", err)
 	}
@@ -245,14 +225,16 @@ func (e *Exporter) attempt(ctx context.Context, body []byte) error {
 	}
 	req.Header.Set("Content-Type", "application/x-protobuf")
 	req.Header.Set("User-Agent", "OTel-Go-Profile-Exporter/"+profile.Version)
-	if e.cfg.compression == GzipCompression {
-		req.Header.Set("Content-Encoding", "gzip")
-	}
 	if ProfilesDevelopmentVersion >= 2 {
 		req.Header.Set("OTLP-Profiles-Development-Version", strconv.Itoa(ProfilesDevelopmentVersion))
 	}
 	for k, v := range e.cfg.headers {
 		req.Header.Set(k, v)
+	}
+	if encoding := compressionCodecs[e.cfg.compression].encoding; encoding != "" {
+		req.Header.Set("Content-Encoding", encoding)
+	} else {
+		req.Header.Del("Content-Encoding")
 	}
 	resp, err := e.client.Do(req)
 	if err != nil {

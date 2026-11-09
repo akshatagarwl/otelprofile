@@ -143,7 +143,7 @@ Explicit fields win over the environment.
 | `MutexProfileFraction`, `BlockProfileRate` | none | 5 and 10µs, only when the type is enabled; restored on `Stop` |
 | `RuntimeDeltas` (experimental) | `OTEL_GO_X_PROFILES_RUNTIME_DELTAS=true` | false. Compute heap, mutex and block deltas from runtime/pprof's public API instead of godeltaprof (which uses `go:linkname`); same data, see `docs/delta-without-linkname.md` for the cost. |
 | `DisableGCRuns` | none | false (a GC runs before a heap collection if none ran in the window, so in-use figures stay current) |
-| — | `OTEL_EXPORTER_OTLP_[PROFILES_]TIMEOUT`, `_COMPRESSION` (`gzip` or `none`), `_CERTIFICATE`, `_CLIENT_CERTIFICATE`, `_CLIENT_KEY` | 10s, none (the OTLP default) |
+| — | `OTEL_EXPORTER_OTLP_[PROFILES_]TIMEOUT`, `_COMPRESSION` ([encodings](docs/compression.md)), `_CERTIFICATE`, `_CLIENT_CERTIFICATE`, `_CLIENT_KEY` | 10s, none (the OTLP default) |
 | — | `OTEL_SDK_DISABLED=true` turns `Start` into a no-op | |
 
 Errors (an unreachable endpoint, a rejected request) are logged through
@@ -215,8 +215,8 @@ comparison are in [SCORECARD.md](SCORECARD.md).
 - `otelprofile`: the one-call `Start`, `TagWrapper`, `Labels`.
 - `profile`: the collector (`NewProfiler`, `WithTypes`, `WithInterval`, ...),
   shaped like a future `go.opentelemetry.io/otel/sdk/profile`.
-- `otlpprofilehttp`: the OTLP/HTTP exporter (gzip, retries with
-  `Retry-After`, partial success, request size cap).
+- `otlpprofilehttp`: the OTLP/HTTP exporter ([compression choices](docs/compression.md),
+  retries with `Retry-After`, partial success, request size cap).
 - `profiletrace`: span-to-profile links.
 - `internal/transform`: pprof to OTLP (one dictionary per request, deduplicated,
   passes `profcheck` with every check enabled).
