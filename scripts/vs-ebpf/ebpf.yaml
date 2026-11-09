@@ -1,23 +1,26 @@
-# opentelemetry-ebpf-profiler (official otelcol-ebpf-profiler image), Go
-# symbolization and Go labels on (the defaults), sampling at 100 Hz to match
-# the Go runtime's CPU profiler (the receiver's default is 20 Hz).
+# opentelemetry-ebpf-profiler (official otelcol-ebpf-profiler image). Go
+# symbolization and Go labels are on (the defaults). The scripts set the
+# sampling rate (the receiver's default is 20 Hz) and the optional parts
+# through the environment.
 extensions:
   offcpu:
     threshold: ${env:OFFCPU_THRESHOLD:-0.1}
 receivers:
   profiling:
-    samples_per_second: ${env:SAMPLES_PER_SECOND:-100}
-    probes: ${env:PROBES:-[offcpu]}
+    samples_per_second: ${env:SAMPLES_PER_SECOND:-97}
+    probes: ${env:PROBES:-[]}
     # OrbStack runs Docker in a nested PID namespace, so --pid=host is not the
-    # kernel's root namespace; the receiver must translate PIDs.
-    pid_namespace_translation_mode: auto
+    # kernel's root namespace there; the receiver must translate PIDs.
+    pid_namespace_translation_mode: ${env:PIDNS:-auto}
+    # Read trace and span IDs that OBI publishes in /sys/fs/bpf/otel/traces_ctx_v1.
+    obi_process_ctx: ${env:OBI_PROCESS_CTX:-false}
 exporters:
   otlp_grpc:
     endpoint: ${env:HUB:-vs-hub:4317}
     tls:
       insecure: true
 service:
-  extensions: ${env:EXTENSIONS:-[offcpu]}
+  extensions: ${env:EXTENSIONS:-[]}
   pipelines:
     profiles:
       receivers: [profiling]

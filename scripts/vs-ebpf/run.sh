@@ -9,19 +9,20 @@
 # into Grafana Pyroscope on localhost:4040.
 #
 #   EBPF=1 HZ=97 scripts/vs-ebpf/run.sh <minutes> <outdir>
-# HZ is the eBPF sampling rate (receiver default 20; Go's profiler is 100).
+# HZ is the eBPF sampling rate (default here 97; the receiver's own default
+# is 20; Go's profiler is 100).
 set -euo pipefail
 mins=${1:-15}; out=${2:-/tmp/vsebpf/run}; ebpf=${EBPF:-1}
 here=$(cd "$(dirname "$0")/../.." && pwd); cfg=$here/scripts/vs-ebpf
 mkdir -p "$out" "$here/bin/linux"; chmod 777 "$out"
 (cd "$here/examples/demo" &&
-  GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags nootel,nopyro -o ../../bin/linux/demo-none . &&
-  GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags nopyro -o ../../bin/linux/demo-otel .)
+  GOOS=linux GOARCH=$(docker version -f "{{.Server.Arch}}") CGO_ENABLED=0 go build -tags nootel,nopyro -o ../../bin/linux/demo-none . &&
+  GOOS=linux GOARCH=$(docker version -f "{{.Server.Arch}}") CGO_ENABLED=0 go build -tags nopyro -o ../../bin/linux/demo-otel .)
 docker network create vsebpf > /dev/null 2>&1 || true
 docker rm -f vs-hub vs-ebpf vs-demo-otel vs-demo-none vs-bpfstats > /dev/null 2>&1 || true
 docker ps --format '{{.Names}}' | grep -qx vs-pyroscope ||
   docker run -d --name vs-pyroscope --network vsebpf -p 127.0.0.1:4040:4040 grafana/pyroscope:2.4.3 > /dev/null
-docker run -d --name vs-hub --network vsebpf -v "$cfg/hub.yaml":/etc/hub.yaml:ro -v "$out":/out \
+docker run -d --name vs-hub --network vsebpf -e "PROFILE_EXPORTERS=[otlp_http/pyroscope, file/profiles]" -v "$cfg/hub.yaml":/etc/hub.yaml:ro -v "$out":/out \
   otel/opentelemetry-collector-contrib:0.165.0 --config /etc/hub.yaml --feature-gates=service.profilesSupport > /dev/null
 sleep 3
 if [ "$ebpf" = 1 ]; then
@@ -33,7 +34,7 @@ if [ "$ebpf" = 1 ]; then
   for try in 1 2 3 4 5; do
     docker rm -f vs-ebpf > /dev/null 2>&1 || true
     docker run -d --name vs-ebpf --network vsebpf --privileged --pid=host -e 'PROBES=[]' -e 'EXTENSIONS=[]' \
-      -e "SAMPLES_PER_SECOND=${HZ:-100}" \
+      -e "SAMPLES_PER_SECOND=${HZ:-97}" \
       -v /sys/kernel/debug:/sys/kernel/debug -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v "$cfg/ebpf.yaml":/etc/ebpf.yaml:ro \
       otel/opentelemetry-collector-ebpf-profiler:latest --config /etc/ebpf.yaml --feature-gates=+service.profilesSupport > /dev/null
     sleep 20

@@ -1,5 +1,6 @@
-# Receives profiles from both sides, keeps a raw copy and forwards them to
-# Pyroscope, so both land in the same backend through the same path.
+# Receives profiles (and OBI's traces) from both sides, keeps a raw copy and
+# forwards profiles to Pyroscope when run.sh asks for it
+# (PROFILE_EXPORTERS), so both land in the same backend through the same path.
 receivers:
   otlp:
     protocols:
@@ -9,16 +10,24 @@ receivers:
         endpoint: 0.0.0.0:4317
 exporters:
   otlp_http/pyroscope:
-    endpoint: http://vs-pyroscope:4040
-  file/raw:
+    endpoint: ${env:PYROSCOPE:-http://vs-pyroscope:4040}
+    retry_on_failure:
+      enabled: false
+  file/profiles:
     path: /out/profiles.jsonl
+    format: json
+  file/traces:
+    path: /out/traces.jsonl
     format: json
   nop:
 service:
   pipelines:
     profiles:
       receivers: [otlp]
-      exporters: [otlp_http/pyroscope, file/raw]
+      exporters: ${env:PROFILE_EXPORTERS:-[file/profiles]}
     traces:
+      receivers: [otlp]
+      exporters: [file/traces]
+    metrics:
       receivers: [otlp]
       exporters: [nop]
