@@ -36,11 +36,12 @@ if [ "$ebpf" = 1 ]; then
     docker run -d --name vs-ebpf --network vsebpf --privileged --pid=host -e 'PROBES=[]' -e 'EXTENSIONS=[]' \
       -e "SAMPLES_PER_SECOND=${HZ:-97}" \
       -v /sys/kernel/debug:/sys/kernel/debug -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v "$cfg/ebpf.yaml":/etc/ebpf.yaml:ro \
-      otel/opentelemetry-collector-ebpf-profiler:latest --config /etc/ebpf.yaml --feature-gates=+service.profilesSupport > /dev/null
+      otel/opentelemetry-collector-ebpf-profiler:0.165.0 --config /etc/ebpf.yaml --feature-gates=+service.profilesSupport > /dev/null
     sleep 20
     [ "$(docker inspect -f '{{.State.Status}}' vs-ebpf)" = running ] && break
     echo "eBPF receiver failed to start (try $try)" >&2
   done
+  [ "$(docker inspect -f '{{.State.Status}}' vs-ebpf)" = running ] || { docker logs vs-ebpf >&2; exit 1; }
   docker exec vs-bpfstats bpftool -j prog show > "$out/bpf-start.json"
 fi
 date +%s > "$out/start"

@@ -212,19 +212,22 @@ comparison are in [SCORECARD.md](SCORECARD.md).
 
 ## otelprofile vs the eBPF profiler
 
-Same Go app, same 15 minutes, same kernel and backend as the
-[OpenTelemetry eBPF profiler](https://github.com/open-telemetry/opentelemetry-ebpf-profiler):
+We compared the same Go app with the
+[OpenTelemetry eBPF profiler](https://github.com/open-telemetry/opentelemetry-ebpf-profiler),
+then checked stock Ubuntu kernels on x86-64 and arm64:
 
 | | otelprofile | eBPF profiler |
 |---|---|---|
-| Go profile types | CPU, heap, goroutine, mutex, block | CPU |
-| CPU profiled ÷ CPU used | 99 % | 98 % at 97 Hz, 3–138 % at the default 20 Hz |
-| Leaf function's caller (arm64) | kept | dropped |
-| Span links | yes | only with OBI (not tested) |
-| Inlined Go frames | yes | no |
+| Profiles | CPU, heap, goroutine, mutex, block | CPU, native off-CPU |
+| CPU profiled ÷ CPU used (Ubuntu) | 98.7–98.9 % | 93.3–99.6 % at 97 Hz |
+| `main.burn` caller in these runs | kept | dropped on both architectures |
+| Span links | application spans | OBI-generated HTTP processing spans |
+| Inlined Go frames | retained | sparse in these runs |
 | Kernel frames, other languages, no rebuild | no | yes |
 
-Screenshots, numbers and scripts: [docs/vs-ebpf.md](docs/vs-ebpf.md).
+Default-rate sampling, Kubernetes, overhead, real screenshots and reproducible
+scripts: [docs/vs-ebpf.md](docs/vs-ebpf.md). These are workload-specific results,
+not a universal profiler ranking.
 
 ## Packages
 

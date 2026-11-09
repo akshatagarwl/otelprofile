@@ -1,0 +1,9 @@
+{"probe": "lo-20-1", "program": "native_tracer_entry", "run_time_ns": 92377575, "run_cnt": 20233, "ns_per_run": 4566}
+{"probe": "lo-20-2", "program": "native_tracer_entry", "run_time_ns": 120135824, "run_cnt": 20200, "ns_per_run": 5947}
+{"probe": "lo-20-3", "program": "native_tracer_entry", "run_time_ns": 433230782, "run_cnt": 20503, "ns_per_run": 21130}
+{"probe": "lo-97-1", "program": "native_tracer_entry", "run_time_ns": 344381673, "run_cnt": 97640, "ns_per_run": 3527}
+{"probe": "lo-97-2", "program": "native_tracer_entry", "run_time_ns": 447003723, "run_cnt": 97593, "ns_per_run": 4580}
+{"probe": "lo-97-3", "program": "native_tracer_entry", "run_time_ns": 457822412, "run_cnt": 97315, "ns_per_run": 4705}
+{"probe": "lp100", "program": "native_tracer_entry", "run_time_ns": 1157480098, "run_cnt": 124703, "ns_per_run": 9282}
+{"probe": "lp20", "program": "native_tracer_entry", "run_time_ns": 57700351, "run_cnt": 25012, "ns_per_run": 2307}
+{"probe": "lp97", "program": "native_tracer_entry", "run_time_ns": 807944869, "run_cnt": 123726, "ns_per_run": 6530}

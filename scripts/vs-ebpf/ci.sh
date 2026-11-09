@@ -8,7 +8,8 @@ root=$1; s=${2:-120}
 p=$(dirname "$0")/probe.sh
 mkdir -p "$root"
 { uname -a; nproc; grep PRETTY /etc/os-release; ls -la /sys/kernel/btf/vmlinux; go version; } > "$root/env.txt" 2>&1
-step() { local dir=$1; shift; echo "::group::$dir"; "$@" || echo "probe $dir failed" | tee -a "$root/failures.txt"; echo "::endgroup::"; }
+failed=0
+step() { local dir=$1; shift; echo "::group::$dir"; if ! "$@"; then failed=1; echo "probe $dir failed" | tee -a "$root/failures.txt"; fi; echo "::endgroup::"; }
 
 # 1. Both profilers on the same workload, eBPF at 97 Hz.
 step quality env HZ=97 "$p" 300 "$root/quality" qotel qnone
@@ -29,4 +30,5 @@ for r in 1 2 3; do
 done
 # 5. OBI publishes trace context; the profiler links samples to it.
 step obi env OBI=1 HZ=97 "$p" 180 "$root/obi" obinone
-python3 "$(dirname "$0")/ci-summary.py" "$root" | tee "$root/summary.md"
+if ! python3 "$(dirname "$0")/ci-summary.py" "$root" | tee "$root/summary.md"; then failed=1; fi
+exit "$failed"

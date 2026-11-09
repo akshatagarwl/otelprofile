@@ -1,0 +1,1 @@
+k8sdemo {"stats":"exit","profiler":"none","uptime_s":150,"cpu_s":23.796,"maxrss_mb":28.8,"alloc_mb":4271.5,"alloc_objects":1816133,"gc_cycles":837,"runtime_mem_mb":25.2}

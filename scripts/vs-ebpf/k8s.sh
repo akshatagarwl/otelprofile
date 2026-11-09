@@ -20,6 +20,8 @@ kind load docker-image vs-k8sdemo:1 --name vsebpf
 # Public images are pulled by the node itself ("kind load" of multi-platform
 # images fails with Docker's containerd image store).
 node=vsebpf-control-plane
+# Never let an existing current-context direct experiment writes elsewhere.
+kubectl() { command kubectl --context kind-vsebpf "$@"; }
 kubectl create configmap hub --from-file=hub.yaml="$cfg/hub.yaml" --dry-run=client -o yaml | kubectl apply -f -
 
 # shellcheck disable=SC2086 # MODES is a word list
@@ -108,5 +110,12 @@ YAML
   kubectl delete service/hub configmap/ebpf > /dev/null
   echo "== $mode"; cat "$d/profiler-pods.txt"; grep -o 'Error: .*' "$d"/ebpf*.log | head -2 || true
   python3 "$cfg/probe-report.py" "$d" k8sdemo | tee "$d/report.jsonl"
+  if [ "$mode" = auto ]; then
+    python3 - "$d/report.jsonl" <<'EOF'
+import json, sys
+r = json.loads(open(sys.argv[1]).readline())
+assert r.get("ebpf_cpu_s", 0) > 0, "DaemonSet started but exported no demo CPU samples"
+EOF
+  fi
 done
 kind delete cluster --name vsebpf

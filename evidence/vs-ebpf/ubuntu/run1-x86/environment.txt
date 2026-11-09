@@ -1,0 +1,5 @@
+Linux runnervmwuk1x 7.0.0-1019-azure #20-Ubuntu SMP PREEMPT Mon Oct 19 22:41:16 UTC 2026 x86_64 GNU/Linux
+4
+PRETTY_NAME="Ubuntu 26.04.1 LTS"
+-r--r--r-- 1 root root 7267528 Nov  9 12:53 /sys/kernel/btf/vmlinux
+go version go1.27.3 linux/amd64

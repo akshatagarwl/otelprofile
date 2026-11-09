@@ -59,6 +59,11 @@ if [ "$ebpf" = 1 ]; then
     [ "$(docker inspect -f '{{.State.Status}}' vs-ebpf)" = running ] && break
     echo "eBPF receiver failed to start (try $try): $(docker logs vs-ebpf 2>&1 | grep -o 'Error: .*' | head -1)" | tee -a "$out/starts.txt" >&2
   done
+  if [ "$(docker inspect -f '{{.State.Status}}' vs-ebpf)" != running ]; then
+    docker logs vs-ebpf > "$out/ebpf.log" 2>&1
+    echo "eBPF receiver did not start after $try attempts" >&2
+    exit 1
+  fi
   echo "started on try $try" >> "$out/starts.txt"
   sleep 5
   docker exec vs-bpfstats bpftool -j prog show > "$out/bpf-start.json" 2>/dev/null || true
@@ -74,6 +79,11 @@ if [ "$obi" = 1 ]; then
     -e OTEL_EBPF_TRACE_PRINTER=disabled \
     "$obi_image" > /dev/null
   sleep 15
+  if [ "$(docker inspect -f '{{.State.Status}}' vs-obi)" != running ]; then
+    docker logs vs-obi > "$out/obi.log" 2>&1
+    echo "OBI did not start" >&2
+    exit 1
+  fi
 fi
 
 for spec in "$@"; do
@@ -98,6 +108,20 @@ for n in "${names[@]}"; do docker logs "vs-$n" 2>&1 | grep '"exit"' | sed "s/^/$
 for c in vs-ebpf vs-obi; do docker logs $c > "$out/${c#vs-}.log" 2>&1 || true; done
 docker rm -f vs-ebpf vs-bpfstats vs-obi vs-hub > /dev/null 2>&1 || true
 python3 "$cfg/probe-report.py" "$out" "${names[@]}" | tee "$out/report.jsonl"
+python3 - "$out/report.jsonl" "$ebpf" "$offcpu" "$obi" <<'EOF'
+import json, sys
+rows = [json.loads(line) for line in open(sys.argv[1])]
+rows = [r for r in rows if "rusage_cpu_s" in r]
+assert rows and all(r["rusage_cpu_s"] for r in rows), "missing process rusage"
+if sys.argv[2] == "1":
+    assert all(r.get("ebpf_cpu_s", 0) > 0 for r in rows), "missing eBPF CPU samples"
+assert all(r.get("otel_cpu_s", 0) > 0 for r in rows if "otel" in r["name"]), "missing otelprofile CPU samples"
+if sys.argv[3] == "1":
+    assert any(r.get("offcpu_s", 0) > 0 for r in rows), "missing off-CPU durations"
+if sys.argv[4] == "1":
+    assert any(v.get("span_found", 0) > 0 for r in rows for k, v in r.items()
+               if k.startswith("obi_") and isinstance(v, dict)), "no OBI links match received spans"
+EOF
 if [ -f "$out/bpf-end.json" ] && [ -f "$out/bpf-start.json" ]; then
   python3 - "$out" <<'EOF' | tee "$out/bpf-stats.json"
 import json, sys

@@ -254,10 +254,10 @@ func client(ctx context.Context, url string) {
 	defer t.Stop()
 	c := &http.Client{Timeout: 5 * time.Second}
 	for i := 0; ; i++ {
-		var next <-chan time.Time = t.C
+		next := t.C
 		if *arrivals == "poisson" {
-			// Exponential gaps: requests don't line up with any timer, like
-			// traffic from many independent clients.
+			// Randomize the gap after each completed request. This is a
+			// closed-loop client, not an open-loop Poisson arrival process.
 			next = time.After(time.Duration(rand.ExpFloat64() * float64(gap)))
 		}
 		select {

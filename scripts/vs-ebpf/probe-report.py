@@ -17,6 +17,7 @@ It also reports, for the eBPF side:
   - the top off-CPU stacks, if the off-CPU probe ran
 """
 import collections
+import gzip
 import json
 import os
 import sys
@@ -34,19 +35,35 @@ def sval(v, st):
     return ""
 
 
-cpu = {}
+def jsonlines(name):
+    path = os.path.join(out, name + ".jsonl")
+    if os.path.exists(path):
+        stream = open(path)
+    elif os.path.exists(path + ".gz"):
+        stream = gzip.open(path + ".gz", "rt")
+    else:
+        return
+    with stream:
+        for line in stream:
+            if line.strip():
+                yield json.loads(line)
+
+
+cpu, rss = {}, {}
 for line in open(os.path.join(out, "rusage.txt")):
     n, js = line.split(" ", 1)
-    cpu[n] = json.loads(js)["cpu_s"]
+    stats = json.loads(js)
+    cpu[n] = stats["cpu_s"]
+    rss[n] = stats.get("maxrss_mb")
 
 R = {n: {"rusage_cpu_s": cpu.get(n), "ebpf_types": collections.Counter(), "ebpf_cpu_s": 0.0, "otel_cpu_s": 0.0,
          "leaf": {"ebpf": [0, 0], "otel": [0, 0]}, "linked": 0, "cpu_samples": 0,
          "trace_ids": collections.defaultdict(collections.Counter),
          "otel_trace_ids": collections.defaultdict(collections.Counter), "otel_linked": 0, "otel_samples": 0, "offcpu": collections.Counter(),
+         "hotspots": {s: collections.Counter() for s in ("otel", "ebpf")},
          "otel_inlined": set(), "ebpf_funcs": set()} for n in names}
 
-for line in open(os.path.join(out, "profiles.jsonl")):
-    d = json.loads(line)
+for d in jsonlines("profiles"):
     dic = d["dictionary"]
     st = dic["stringTable"]
     for rp in d["resourceProfiles"]:
@@ -89,14 +106,14 @@ for line in open(os.path.join(out, "profiles.jsonl")):
                                 r["trace_ids"][h][(lk.get("traceId", ""), lk.get("spanId", ""))] += n
                             side = "ebpf"
                         else:
-                            if frames:
-                                r["offcpu"][" <- ".join(frames[:5])] += int(s["values"][0]) if s.get("values") else n
+                            if stype == "off_cpu" and unit == "nanoseconds" and frames:
+                                r["offcpu"][" <- ".join(frames[:5])] += sum(map(int, s.get("values", [])))
                             continue
                     else:
                         if stype != "samples":
                             continue
                         n = int(s["values"][0])
-                        r["otel_cpu_s"] += n / 100
+                        r["otel_cpu_s"] += n * period / 1e9
                         r["otel_samples"] += n
                         if s.get("linkIndex"):
                             r["otel_linked"] += n
@@ -105,6 +122,8 @@ for line in open(os.path.join(out, "profiles.jsonl")):
                             r["otel_trace_ids"][h][(lk.get("traceId", ""), lk.get("spanId", ""))] += n
                         r["otel_inlined"].update(inlined)
                         side = "otel"
+                    hotspot = next((x for x in ("main.queryDB", "main.renderPage", "main.fastHandler") if x in frames), "other")
+                    r["hotspots"][side][hotspot] += n
                     if frames and frames[0] == "main.spinLCG":
                         r["leaf"][side][1] += n
                         if len(frames) > 1 and frames[1] == "main.burn":
@@ -113,18 +132,16 @@ for line in open(os.path.join(out, "profiles.jsonl")):
 # OBI traces the hub received: trace id -> span names
 spans = collections.defaultdict(set)
 span_name = {}
-tpath = os.path.join(out, "traces.jsonl")
-if os.path.exists(tpath):
-    for line in open(tpath):
-        for rs in json.loads(line).get("resourceSpans", []):
-            for ss in rs.get("scopeSpans", []):
-                for sp in ss.get("spans", []):
-                    spans[sp["traceId"]].add(sp.get("name", ""))
-                    span_name[sp.get("spanId", "")] = sp.get("name", "")
+for d in jsonlines("traces"):
+    for rs in d.get("resourceSpans", []):
+        for ss in rs.get("scopeSpans", []):
+            for sp in ss.get("spans", []):
+                spans[sp["traceId"]].add(sp.get("name", ""))
+                span_name[(sp["traceId"], sp.get("spanId", ""))] = sp.get("name", "")
 
 for n in names:
     r = R[n]
-    o = {"name": n, "rusage_cpu_s": r["rusage_cpu_s"]}
+    o = {"name": n, "rusage_cpu_s": r["rusage_cpu_s"], "maxrss_mb": rss.get(n)}
     if r["cpu_samples"]:
         o["ebpf_cpu_s"] = round(r["ebpf_cpu_s"], 2)
         o["ebpf_vs_rusage"] = round(r["ebpf_cpu_s"] / r["rusage_cpu_s"], 3) if r["rusage_cpu_s"] else None
@@ -136,11 +153,14 @@ for n in names:
             for h, ids in r["trace_ids"].items():
                 known = sum(c for (t, _), c in ids.items() if t in spans)
                 by_span = collections.Counter()
-                for (_, sid), c in ids.items():
-                    by_span[span_name.get(sid, "<span not in traces>")] += c
-                o[f"obi_{h}"] = {"linked_samples": sum(ids.values()), "trace_found": known, "linked_span": dict(by_span.most_common(4))}
+                for pair, c in ids.items():
+                    by_span[span_name.get(pair, "<span not in traces>")] += c
+                o[f"obi_{h}"] = {"linked_samples": sum(ids.values()), "trace_found": known,
+                                  "span_found": sum(c for pair, c in ids.items() if pair in span_name),
+                                  "linked_span": dict(by_span.most_common(4))}
         if r["offcpu"]:
             tot = sum(r["offcpu"].values())
+            o["offcpu_s"] = round(tot / 1e9, 3)
             o["offcpu_top"] = [(k, round(100 * v / tot, 1)) for k, v in r["offcpu"].most_common(5)]
     if r["otel_cpu_s"]:
         o["otel_cpu_s"] = round(r["otel_cpu_s"], 2)
@@ -152,9 +172,14 @@ for n in names:
         if r["otel_linked"] and spans:
             for h, ids in r["otel_trace_ids"].items():
                 by_span = collections.Counter()
-                for (_, sid), c in ids.items():
-                    by_span[span_name.get(sid, "<span not in traces>")] += c
+                for pair, c in ids.items():
+                    by_span[span_name.get(pair, "<span not in traces>")] += c
                 o[f"otel_link_{h}"] = dict(by_span.most_common(3))
+    for src in ("ebpf", "otel"):
+        counts = r["hotspots"][src]
+        total = sum(counts.values())
+        if total:
+            o[f"{src}_hotspot_pct"] = {h: round(100 * c / total, 1) for h, c in counts.most_common()}
     print(json.dumps(o))
 # Inlined functions otelprofile showed that the eBPF stacks of the same
 # process also contain.

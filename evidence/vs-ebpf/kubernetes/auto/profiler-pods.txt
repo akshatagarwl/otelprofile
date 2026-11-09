@@ -1,0 +1,4 @@
+NAME                  READY   STATUS    RESTARTS   AGE   IP           NODE                   NOMINATED NODE   READINESS GATES
+ebpf-profiler-lt6j4   1/1     Running   0          31s   10.244.0.9   vsebpf-control-plane   <none>           <none>
+NAME                  READY   STATUS    RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+ebpf-profiler-lt6j4   1/1     Running   0          3m23s   10.244.0.9   vsebpf-control-plane   <none>           <none>
