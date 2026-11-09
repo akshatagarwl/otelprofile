@@ -1,0 +1,62 @@
+name: vs-ebpf
+
+# The measurements behind docs/vs-ebpf.md on stock Ubuntu kernels: x86-64
+# and arm64 runners, plus the eBPF profiler as a Kubernetes DaemonSet (kind).
+# Manual only; it takes about an hour.
+on:
+  workflow_dispatch:
+  push:
+    branches: ["vs-ebpf-run/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  probes:
+    name: probes (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.27.x"
+          cache-dependency-path: examples/demo/go.sum
+      - name: probes
+        run: scripts/vs-ebpf/ci.sh "$RUNNER_TEMP/vs-ebpf" 120
+      - name: summary
+        if: always()
+        run: cat "$RUNNER_TEMP/vs-ebpf/summary.md" >> "$GITHUB_STEP_SUMMARY" || true
+      - name: compress raw profiles
+        if: always()
+        run: find "$RUNNER_TEMP/vs-ebpf" -name '*.jsonl' -size +1M -exec gzip -9 {} +
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: vs-ebpf-${{ matrix.runner }}
+          path: ${{ runner.temp }}/vs-ebpf
+          retention-days: 30
+
+  kubernetes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.27.x"
+          cache-dependency-path: examples/demo/go.sum
+      - name: kind
+        run: go install sigs.k8s.io/kind@v0.33.0
+      - name: DaemonSet
+        run: scripts/vs-ebpf/k8s.sh "$RUNNER_TEMP/k8s" 150
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: vs-ebpf-kubernetes
+          path: ${{ runner.temp }}/k8s
+          retention-days: 30

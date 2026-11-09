@@ -1,0 +1,5 @@
+Linux runnervmkb2gk 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 19:06:39 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux
+4
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+-r--r--r-- 1 root root 8430525 Nov  9 12:53 /sys/kernel/btf/vmlinux
+go version go1.27.3 linux/arm64

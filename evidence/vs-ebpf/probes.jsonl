@@ -1,0 +1,11 @@
+{"probe": "e1", "hz": 100, "setup": "one process", "name": "e1-none", "rusage_cpu_s": 33.01, "ebpf_cpu_s": 30.95, "ebpf_vs_rusage": 0.938}
+{"probe": "e2", "hz": 100, "setup": "two identical processes", "name": "e2-a", "rusage_cpu_s": 31.418, "ebpf_cpu_s": 37.6, "ebpf_vs_rusage": 1.197}
+{"probe": "e2", "hz": 100, "setup": "two identical processes", "name": "e2-b", "rusage_cpu_s": 32.093, "ebpf_cpu_s": 21.68, "ebpf_vs_rusage": 0.676}
+{"probe": "e3", "hz": 100, "setup": "two identical processes, --pid=host", "name": "e3-a", "rusage_cpu_s": 29.235, "ebpf_cpu_s": 22.71, "ebpf_vs_rusage": 0.777}
+{"probe": "e3", "hz": 100, "setup": "two identical processes, --pid=host", "name": "e3-b", "rusage_cpu_s": 28.43, "ebpf_cpu_s": 29.78, "ebpf_vs_rusage": 1.047}
+{"probe": "e4", "hz": 97, "setup": "two identical processes", "name": "e4-a", "rusage_cpu_s": 28.195, "ebpf_cpu_s": 27.63, "ebpf_vs_rusage": 0.98}
+{"probe": "e4", "hz": 97, "setup": "two identical processes", "name": "e4-b", "rusage_cpu_s": 28.461, "ebpf_cpu_s": 26.86, "ebpf_vs_rusage": 0.944}
+{"probe": "e5", "hz": 20, "setup": "two identical processes", "name": "e5-a", "rusage_cpu_s": 30.447, "ebpf_cpu_s": 3.15, "ebpf_vs_rusage": 0.103}
+{"probe": "e5", "hz": 20, "setup": "two identical processes", "name": "e5-b", "rusage_cpu_s": 31.031, "ebpf_cpu_s": 42.95, "ebpf_vs_rusage": 1.384}
+{"probe": "e6", "hz": 20, "setup": "two identical processes", "name": "twin-a", "rusage_cpu_s": 29.145, "ebpf_cpu_s": 1.1, "ebpf_vs_rusage": 0.038}
+{"probe": "e6", "hz": 20, "setup": "two identical processes", "name": "twin-b", "rusage_cpu_s": 27.645, "ebpf_cpu_s": 0.95, "ebpf_vs_rusage": 0.034}

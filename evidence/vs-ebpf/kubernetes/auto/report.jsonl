@@ -1,0 +1,1 @@
+{"name": "k8sdemo", "rusage_cpu_s": 23.695, "maxrss_mb": 28.8, "ebpf_cpu_s": 22.0, "ebpf_vs_rusage": 0.928, "ebpf_types": {"samples/count period=cpu": 2134}, "ebpf_leaf_caller_kept": "0/1472", "ebpf_pct_cpu_linked": 0.0, "ebpf_hotspot_pct": {"main.fastHandler": 32.1, "other": 30.3, "main.queryDB": 28.2, "main.renderPage": 9.4}}

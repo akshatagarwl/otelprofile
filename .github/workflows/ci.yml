@@ -41,6 +41,13 @@ jobs:
           go build -tags nootel -o /dev/null .
           go build -o /dev/null ./memcheck
 
+  comparison-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: python3 -m unittest discover -s scripts/vs-ebpf
+      - run: for script in scripts/vs-ebpf/*.sh; do bash -n "$script"; done
+
   lint:
     runs-on: ubuntu-latest
     steps:

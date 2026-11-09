@@ -1,0 +1,15 @@
+{"probe": "obi", "program": "native_tracer_entry", "run_time_ns": 99794032, "run_cnt": 78562, "ns_per_run": 1270}
+{"probe": "offcpu", "program": "native_tracer_entry", "run_time_ns": 27790408, "run_cnt": 48641, "ns_per_run": 571}
+{"probe": "ovh-20-1", "program": "native_tracer_entry", "run_time_ns": 26994040, "run_cnt": 10032, "ns_per_run": 2691}
+{"probe": "ovh-20-2", "program": "native_tracer_entry", "run_time_ns": 13678344, "run_cnt": 10024, "ns_per_run": 1365}
+{"probe": "ovh-20-3", "program": "native_tracer_entry", "run_time_ns": 13842840, "run_cnt": 10032, "ns_per_run": 1380}
+{"probe": "ovh-97-1", "program": "native_tracer_entry", "run_time_ns": 51542136, "run_cnt": 48636, "ns_per_run": 1060}
+{"probe": "ovh-97-2", "program": "native_tracer_entry", "run_time_ns": 51339680, "run_cnt": 48640, "ns_per_run": 1056}
+{"probe": "ovh-97-3", "program": "native_tracer_entry", "run_time_ns": 51618072, "run_cnt": 48623, "ns_per_run": 1062}
+{"probe": "quality", "program": "native_tracer_entry", "run_time_ns": 233643040, "run_cnt": 118561, "ns_per_run": 1971}
+{"probe": "rate-poisson-100", "program": "native_tracer_entry", "run_time_ns": 96337784, "run_cnt": 50228, "ns_per_run": 1918}
+{"probe": "rate-poisson-20", "program": "native_tracer_entry", "run_time_ns": 23732640, "run_cnt": 10044, "ns_per_run": 2363}
+{"probe": "rate-poisson-97", "program": "native_tracer_entry", "run_time_ns": 94850168, "run_cnt": 48716, "ns_per_run": 1947}
+{"probe": "rate-ticker-100", "program": "native_tracer_entry", "run_time_ns": 69123920, "run_cnt": 50219, "ns_per_run": 1376}
+{"probe": "rate-ticker-20", "program": "native_tracer_entry", "run_time_ns": 17000376, "run_cnt": 10044, "ns_per_run": 1693}
+{"probe": "rate-ticker-97", "program": "native_tracer_entry", "run_time_ns": 101862176, "run_cnt": 48715, "ns_per_run": 2091}

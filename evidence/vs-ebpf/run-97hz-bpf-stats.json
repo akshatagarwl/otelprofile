@@ -1,0 +1,17 @@
+[
+ {
+  "name": "native_tracer_entry",
+  "run_time_ns": 1317345234,
+  "run_cnt": 701096
+ },
+ {
+  "name": "tracepoint__sys_exit_prctl",
+  "run_time_ns": 311110,
+  "run_cnt": 185
+ },
+ {
+  "name": "tracepoint__sched_process_free",
+  "run_time_ns": 96293,
+  "run_cnt": 215
+ }
+]

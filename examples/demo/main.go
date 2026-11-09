@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"math/rand/v2"
 	"net"
 	"net/http"
 	"os"
@@ -56,6 +57,7 @@ var (
 	rtDeltas = flag.Bool("runtime-deltas", false, "otelprofile: heap/mutex/block deltas from runtime/pprof instead of godeltaprof")
 	memRate  = flag.Int("memprofilerate", 0, "set runtime.MemProfileRate before the workload starts (0 = Go default, 512 KiB)")
 	statsF   = flag.Duration("stats", 0, "print resource usage as JSON every interval and at exit (0 = only at exit)")
+	arrivals = flag.String("arrivals", "ticker", "request timing: ticker (every 1/rps) | poisson (random gaps, mean 1/rps)")
 )
 
 var started = time.Now()
@@ -247,14 +249,21 @@ func run(ctx context.Context, tracer trace.Tracer) {
 }
 
 func client(ctx context.Context, url string) {
-	t := time.NewTicker(time.Second / time.Duration(max(*rps, 1)))
+	gap := time.Second / time.Duration(max(*rps, 1))
+	t := time.NewTicker(gap)
 	defer t.Stop()
 	c := &http.Client{Timeout: 5 * time.Second}
 	for i := 0; ; i++ {
+		next := t.C
+		if *arrivals == "poisson" {
+			// Randomize the gap after each completed request. This is a
+			// closed-loop client, not an open-loop Poisson arrival process.
+			next = time.After(time.Duration(rand.ExpFloat64() * float64(gap)))
+		}
 		select {
 		case <-ctx.Done():
 			return
-		case <-t.C:
+		case <-next:
 		}
 		path := "/fast"
 		if i%4 == 3 {

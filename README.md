@@ -210,6 +210,25 @@ Less CPU than pyroscope-go, similar allocations, about 0.6 MB more memory
 (reused encoder state). Every soak, darwin and linux, and the accuracy
 comparison are in [SCORECARD.md](SCORECARD.md).
 
+## otelprofile vs the eBPF profiler
+
+We compared the same Go app with the
+[OpenTelemetry eBPF profiler](https://github.com/open-telemetry/opentelemetry-ebpf-profiler),
+then checked stock Ubuntu kernels on x86-64 and arm64:
+
+| | otelprofile | eBPF profiler |
+|---|---|---|
+| Profiles | CPU, heap, goroutine, mutex, block | CPU, native off-CPU |
+| CPU profiled ÷ CPU used (Ubuntu) | 98.7–98.9 % | 93.3–99.6 % at 97 Hz |
+| Hot leaf's caller (`burn`) | kept | dropped on both architectures |
+| Span links | application spans | OBI-generated HTTP processing spans |
+| Inlined Go frames | retained | sparse in these runs |
+| Kernel frames, other languages, no rebuild | no | yes |
+
+Default-rate sampling, Kubernetes, overhead, real screenshots and reproducible
+scripts: [docs/vs-ebpf.md](docs/vs-ebpf.md). These are workload-specific results,
+not a universal profiler ranking.
+
 ## Packages
 
 - `otelprofile`: the one-call `Start`, `TagWrapper`, `Labels`.
