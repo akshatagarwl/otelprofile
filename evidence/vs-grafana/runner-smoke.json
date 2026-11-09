@@ -1,0 +1,12 @@
+{
+  "verdict": "verified",
+  "profile_uploads": 23,
+  "quality_requests_per_configuration": 160,
+  "scope": "observed stacks, stored values, dynamic label, resolvable IDs, and backend span filtering; not temporal attribution or overhead significance",
+  "configuration": {
+    "quality_duration": "16s",
+    "cost_duration": "1s",
+    "rounds": 5,
+    "use": "final runner integration smoke only, not the cost benchmark"
+  }
+}

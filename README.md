@@ -229,6 +229,15 @@ Default-rate sampling, Kubernetes, overhead, real screenshots and reproducible
 scripts: [docs/vs-ebpf.md](docs/vs-ebpf.md). These are workload-specific results,
 not a universal profiler ranking.
 
+## Compared with Grafana's Go integration
+
+Grafana's `otel-profiling-go` adds tracing labels. Paired with `pyroscope-go`,
+it collects CPU, heap, and allocations too. Both retained the planted Go caller
+in our same-workload comparison. Both can attribute CPU to child spans.
+
+The difference is native OTLP Profiles and links versus Pyroscope's pprof and
+span-attribute path. [Source comparison, real screenshots, and measurements](docs/vs-grafana.md).
+
 ## Packages
 
 - `otelprofile`: the one-call `Start`, `TagWrapper`, `Labels`.

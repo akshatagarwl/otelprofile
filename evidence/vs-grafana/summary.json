@@ -1,0 +1,91 @@
+{
+  "none": {
+    "n": 5,
+    "cpu_s": {
+      "median": 11.927169,
+      "min": 11.735338,
+      "max": 12.367847
+    },
+    "peak_rss_bytes": {
+      "median": 53428224,
+      "min": 52625408,
+      "max": 55279616
+    },
+    "allocated_bytes": {
+      "median": 316149344,
+      "min": 316107376,
+      "max": 316155192
+    },
+    "requests": {
+      "median": 300,
+      "min": 300,
+      "max": 300
+    },
+    "duration_s": {
+      "median": 30.041711292,
+      "min": 30.040386,
+      "max": 30.047623417
+    }
+  },
+  "otel": {
+    "n": 5,
+    "cpu_s": {
+      "median": 11.934541,
+      "min": 11.884635999999999,
+      "max": 12.628848
+    },
+    "peak_rss_bytes": {
+      "median": 60669952,
+      "min": 60227584,
+      "max": 61014016
+    },
+    "allocated_bytes": {
+      "median": 323101096,
+      "min": 322951128,
+      "max": 323170784
+    },
+    "requests": {
+      "median": 300,
+      "min": 300,
+      "max": 300
+    },
+    "duration_s": {
+      "median": 30.857320916,
+      "min": 30.8441545,
+      "max": 30.902265125
+    }
+  },
+  "grafana": {
+    "n": 5,
+    "cpu_s": {
+      "median": 11.814525,
+      "min": 11.747812000000001,
+      "max": 11.91686
+    },
+    "peak_rss_bytes": {
+      "median": 59949056,
+      "min": 59752448,
+      "max": 61292544
+    },
+    "allocated_bytes": {
+      "median": 322201192,
+      "min": 322185352,
+      "max": 322258160
+    },
+    "requests": {
+      "median": 300,
+      "min": 300,
+      "max": 300
+    },
+    "duration_s": {
+      "median": 30.553016792,
+      "min": 30.481331541,
+      "max": 30.563025625
+    }
+  },
+  "uploads": {
+    "total": 98,
+    "errors": []
+  },
+  "verdict": "shared-host measurements; no significance or universal overhead claim"
+}

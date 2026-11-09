@@ -1,0 +1,6 @@
+{
+  "verdict": "verified",
+  "profile_uploads": 98,
+  "quality_requests_per_configuration": 900,
+  "scope": "observed stacks, stored values, dynamic label, resolvable IDs, and backend span filtering; not temporal attribution or overhead significance"
+}
