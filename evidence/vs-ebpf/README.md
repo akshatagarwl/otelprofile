@@ -9,6 +9,10 @@ No raw OTLP blobs or binaries are checked in.
 summaries and BPF counters from the simultaneous 15-minute runs. `probes.jsonl`
 contains the original shorter rate probes. The summaries' `value` is sample
 count for Go CPU and nanoseconds after period conversion for eBPF CPU.
+The legacy `distinct_stacks` field counts exported stack records, **not**
+globally deduplicated stacks; `frames_per_stack` is unweighted by sample count.
+`pct_linked_to_span` also counts context labels on the eBPF side, not only
+OTLP links; the new Ubuntu reports distinguish actual links.
 `run-*-s-none.json` also contains the hub's Go service profile; use only its
 `ebpf:samples` entry when comparing the plain executable. The original Go
 process is `demo`, the plain executable is `demo-none`.

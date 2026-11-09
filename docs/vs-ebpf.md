@@ -94,6 +94,13 @@ otelprofile retains `fastHandler → burn → spinLCG` and
 with leaf `spinLCG` omitted `burn`; Go retained it. The hot leaf itself is
 present: this is loss of its caller, not a wholly missing hotspot.
 
+On the same original instrumented process, mean / maximum decoded stack
+depth was **10.3 / 26** for Go versus **11.4 / 42** for eBPF. These means are
+unweighted per exported stack record, not per CPU sample; eBPF's extra kernel
+and runtime frames make depth alone a poor quality score. Go had **0** unknown
+frame occurrences, eBPF **153**, across **14,588** and **14,464** stack records
+respectively. Those records are not deduplicated across exports.
+
 ## Sampling rate: measured misses, unproven cause
 
 The first environment was an OrbStack arm64 Linux VM, kernel `7.2.12-orbstack`.
@@ -270,7 +277,14 @@ separate costs; one BPF entry program is not the whole agent's kernel cost.
 
 ## Reproduce and inspect
 
-Requires Linux Docker, Go, Python 3 and privileges to load BPF programs. Do
+The library runs inside the app without BPF privileges; CI tests Linux and
+macOS. The eBPF collector is Linux-only and needs host process visibility and
+BPF access. Here we used privileged containers, host PID namespaces and the
+kernel/debug/cgroup mounts shown in the scripts, not a minimal-capability
+security-policy recipe. BTF availability is recorded in runner metadata.
+
+Reproducing these experiments requires Linux Docker, Go, Python 3 and
+privileges to load BPF programs. Do
 not run these scripts against unrelated workloads: they use named `vs-*`
 containers, expose host process/kernel state and temporarily enable BPF
 runtime accounting. Use a disposable host with adequate disk space.
