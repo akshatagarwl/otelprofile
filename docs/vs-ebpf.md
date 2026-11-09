@@ -95,7 +95,7 @@ alias this much.
 EBPF=1 HZ=97 scripts/vs-ebpf/run.sh 15 /tmp/vsebpf/run      # 15 min, both profilers
 HZ=20 scripts/vs-ebpf/probe.sh 150 /tmp/vsebpf/p a b         # rate check: eBPF vs rusage
 python3 scripts/vs-ebpf/analyze.py /tmp/vsebpf/run/profiles.jsonl demo-none
-cd e2e && node pyroscope.mjs demo process_cpu/cpu out.png --hidechart=1 --expand=1 --search=main.burn
+cd e2e && node pyroscope.mjs demo process_cpu/cpu out.png --width=1100 --scale=2 --hidechart=1 --expand=1 --search=main.burn --clip=0:530
 ```
 
 The summaries are in [`evidence/vs-ebpf/`](../evidence/vs-ebpf).

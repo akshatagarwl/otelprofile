@@ -4,7 +4,7 @@
 //
 //   node pyroscope.mjs <service> <group/type> <out.png> [--query=<label selector>]
 //        [--view=Flame Graph|Top Table|Both] [--search=<text>] [--width=1500] [--height=900]
-//        [--clip=<y0>:<y1>] [--theme=Light] [--hidechart=1] [--picker=1] [--expand=1]
+//        [--clip=<y0>:<y1>] [--theme=Light] [--hidechart=1] [--picker=1] [--expand=1] [--scale=2]
 //
 // e.g. node pyroscope.mjs demo process_cpu/cpu /tmp/a.png
 // PYRO defaults to http://127.0.0.1:4040.
@@ -24,7 +24,7 @@ const browser = await chromium.launch({
   headless: true,
 });
 const width = Number(opts.width ?? 1500);
-const page = await browser.newPage({ viewport: { width, height: Number(opts.height ?? 900) }, deviceScaleFactor: 1 });
+const page = await browser.newPage({ viewport: { width, height: Number(opts.height ?? 900) }, deviceScaleFactor: Number(opts.scale ?? 1) });
 await page.goto(BASE + "/", { waitUntil: "networkidle" });
 await page.waitForTimeout(1500);
 const pause = (ms = 700) => page.waitForTimeout(ms);
