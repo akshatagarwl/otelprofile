@@ -4,7 +4,19 @@ All notable changes to this module. Versions follow semantic versioning;
 before 1.0 minor versions may break the API, and the OTLP Profiles wire
 format follows the upstream development revision.
 
-## Unreleased
+## v0.3.0 — 2026-11-09
+
+### Breaking
+
+- The module path is now `github.com/akshatagarwl/otelprofile-go`, matching
+  the renamed repository. Package names are unchanged (`otelprofile`,
+  `profile`, `otlpprofilehttp`, `profiletrace`), so only import lines change:
+
+  ```sh
+  go get github.com/akshatagarwl/otelprofile-go@v0.3.0
+  ```
+
+  v0.2.0 and earlier stay available under the old path.
 
 ### Documentation
 
