@@ -1,0 +1,28 @@
+{
+  "date_utc": "2026-11-09",
+  "os": "macOS 27.0 / Darwin 27.0.0",
+  "architecture": "arm64",
+  "logical_cpus": 10,
+  "go": "go1.27.3",
+  "base": "af1834b37b67134c5da40d8bbbac7d33df605085",
+  "otelprofile": "v0.3.0 / 058c46c031b36781b9f9d16958e2f150773a33aa",
+  "grafana_integration": "v0.7.0 / 6577d5a059a4f0aed344dc6900c5a14cd3a9955c",
+  "pyroscope_go": "v1.4.0 / d893cd32b650e2e1fff27a09e570b49155037788",
+  "backend": "grafana/pyroscope:2.4.3",
+  "backend_digest": "sha256:bf667534cd403320573063894e3faba20a5a5d1bfb92eddaecfabeb2446c502b",
+  "host_load_start": [
+    6.92,
+    5.96,
+    6.76
+  ],
+  "notes": [
+    "shared host with other agents and browser work",
+    "CPU/alloc deltas after profiler initialization through Stop; RSS lifetime peak",
+    "Grafana diagnostic logger and span_name enabled",
+    "no temporal link-overlap check",
+    "raw per-profile types preserved; snapshot sums are not live memory",
+    "preliminary deadline-loop probes were discarded; measured loop completes fixed work",
+    "runner was edited during the measured series and its automatic postprocessing hit a shell offset/syntax error after all 15 cost outputs completed; final analysis and artifact checks were rerun explicitly and passed; measured workload binary was unchanged",
+    "The unchanged final runner then passed a complete fresh-prefix smoke using 16s quality probes, 1s cost probes, and five rounds; 23 uploads and all raw/backend checks passed. Smoke numbers are not used in the benchmark."
+  ]
+}

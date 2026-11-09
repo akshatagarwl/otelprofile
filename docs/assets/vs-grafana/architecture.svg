@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" role="img" aria-labelledby="title desc">
+<title id="title">Two Go profiling pipelines</title>
+<desc id="desc">Both pipelines collect Go runtime profiles. otelprofile converts pprof into OTLP Profiles and native trace-span links. Grafana's tracing wrapper labels pprof, and pyroscope-go exports multipart pprof to Pyroscope. Both can collect CPU and heap.</desc>
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3z" fill="#64748b"/></marker></defs>
+<rect width="1200" height="480" rx="16" fill="#f8fafc"/>
+<g font-family="system-ui, sans-serif" fill="#0f172a">
+<text x="35" y="42" font-size="25" font-weight="700">Same Go runtime. Different export and correlation formats.</text>
+<text x="35" y="73" font-size="16" fill="#475569">CPU at 100 Hz · sampled heap and allocation deltas · no privileged host agent</text>
+<rect x="35" y="115" width="235" height="235" rx="12" fill="#e2e8f0"/>
+<text x="55" y="148" font-size="20" font-weight="650">Go application</text>
+<text x="55" y="181" font-size="17">Root → child spans</text>
+<text x="55" y="212" font-size="17">pprof CPU samples</text>
+<text x="55" y="243" font-size="17">godeltaprof heap</text>
+<text x="55" y="274" font-size="17">Goroutine / mutex / block</text>
+<text x="55" y="318" font-size="15" fill="#475569">Heap has no span labels.</text>
+<rect x="320" y="115" width="440" height="100" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+<text x="342" y="146" font-size="20" font-weight="650">otelprofile-go</text>
+<text x="342" y="175" font-size="17">pprof → OTLP Profiles development schema</text>
+<text x="342" y="199" font-size="15" fill="#334155">otel.trace_id + otel.span_id → Sample.link</text>
+<rect x="320" y="250" width="440" height="100" rx="12" fill="#ffedd5" stroke="#fdba74"/>
+<text x="342" y="281" font-size="20" font-weight="650">Grafana integration + pyroscope-go</text>
+<text x="342" y="310" font-size="17">pprof + trace_id / span_id labels</text>
+<text x="342" y="334" font-size="15" fill="#334155">pyroscope.profile.id attribute on selected spans</text>
+<rect x="830" y="145" width="335" height="175" rx="12" fill="#fff" stroke="#94a3b8"/>
+<text x="852" y="179" font-size="22" font-weight="650">Same Pyroscope 2.4.3</text>
+<text x="852" y="212" font-size="17">OTLP /v1development/profiles</text>
+<text x="852" y="243" font-size="17">Native multipart pprof /ingest</text>
+<text x="852" y="286" font-size="15" fill="#475569">Also validate raw samples and links.</text>
+<g stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#a)"><path d="M270 170 H312"/><path d="M270 300 H312"/><path d="M760 170 H822"/><path d="M760 300 H822"/></g>
+<text x="35" y="404" font-size="18" font-weight="650">Child-span attribution is configurable in both libraries.</text>
+<text x="35" y="435" font-size="17" fill="#475569">otelprofile defaults to every sampled span. Grafana defaults to the local root and can label every span.</text>
+</g></svg>
