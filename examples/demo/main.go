@@ -76,6 +76,11 @@ func printStats(tag string) {
 		{Name: "/memory/classes/profiling/buckets:bytes"}, {Name: "/memory/classes/metadata/other:bytes"}, {Name: "/memory/classes/other:bytes"}, {Name: "/gc/heap/goal:bytes"}, {Name: "/sched/goroutines:goroutines"}}
 	metrics.Read(s)
 	mb := func(i int) float64 { return float64(s[i].Value.Uint64()) / (1 << 20) }
+	// Where the runtime estimates CPU time went: the profiler's own work is
+	// in user; a heap that triggers more GC cycles shows up in gc.
+	cc := []metrics.Sample{{Name: "/cpu/classes/user:cpu-seconds"}, {Name: "/cpu/classes/gc/total:cpu-seconds"}, {Name: "/cpu/classes/scavenge/total:cpu-seconds"}}
+	metrics.Read(cc)
+	defer fmt.Printf(`{"cpu_classes":%q,"user_s":%.3f,"gc_s":%.3f,"scavenge_s":%.3f}`+"\n", *mode, cc[0].Value.Float64(), cc[1].Value.Float64(), cc[2].Value.Float64())
 	defer fmt.Printf(`{"mem_detail":%q,"objects":%.1f,"free":%.1f,"released":%.1f,"stacks":%.1f,"prof_buckets":%.1f,"meta_other":%.1f,"other":%.1f,"heap_goal":%.1f,"goroutines":%d}`+"\n",
 		*mode, mb(4), mb(5), mb(6), mb(7), mb(8), mb(9), mb(10), mb(11), s[12].Value.Uint64())
 	fmt.Printf(`{"stats":%q,"profiler":%q,"uptime_s":%.0f,"cpu_s":%.3f,"maxrss_mb":%.1f,"alloc_mb":%.1f,"alloc_objects":%d,"gc_cycles":%d,"runtime_mem_mb":%.1f}`+"\n",
