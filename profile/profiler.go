@@ -111,6 +111,12 @@ func (p *Profiler) begin() {
 	if p.enabled[TypeHeap] || p.enabled[TypeMutex] || p.enabled[TypeBlock] {
 		syms = rtprof.NewSymbols()
 	}
+	if p.enabled[TypeMutex] || p.enabled[TypeBlock] {
+		// Read the cycle rate (once per process) before raising the
+		// sampling rates: it walks the mutex profile, which is still
+		// small now unless the program set a fraction itself.
+		_, _ = rtprof.CyclesPerSecond()
+	}
 	if p.enabled[TypeMutex] {
 		prev := runtime.SetMutexProfileFraction(-1)
 		p.prevMutexFraction = prev
