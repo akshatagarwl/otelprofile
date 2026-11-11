@@ -58,19 +58,12 @@ func TestRecordFixtures(t *testing.T) {
 	runtime.SetBlockProfileRate(1)
 	defer runtime.SetMutexProfileFraction(0)
 	defer runtime.SetBlockProfileRate(0)
-	syms := rtprof.NewSymbols()
-	heap := rtprof.NewHeapProfiler(syms)
-	mutex, err := rtprof.NewMutexProfiler(syms)
-	if err != nil {
-		t.Fatal(err)
+	heap, mutex, block := rtprof.NewHeap(), rtprof.NewMutex(), rtprof.NewBlock()
+	for _, d := range []*rtprof.Profiler{heap, mutex, block} {
+		if _, err := d.Profile(); err != nil {
+			t.Fatal(err)
+		}
 	}
-	block, err := rtprof.NewBlockProfiler(syms)
-	if err != nil {
-		t.Fatal(err)
-	}
-	heap.Profile()
-	mutex.Profile()
-	block.Profile()
 
 	var cpu bytes.Buffer
 	if err := pprof.StartCPUProfile(&cpu); err != nil {
@@ -132,9 +125,13 @@ func TestRecordFixtures(t *testing.T) {
 	write("cpu", cpu.Bytes())
 	runtime.GC()
 
-	write("heap", heap.Profile())
-	write("mutex", mutex.Profile())
-	write("block", block.Profile())
+	for name, d := range map[string]*rtprof.Profiler{"heap": heap, "mutex": mutex, "block": block} {
+		b, err := d.Profile()
+		if err != nil {
+			t.Fatal(err)
+		}
+		write(name, b)
+	}
 	var b bytes.Buffer
 	_ = pprof.Lookup("goroutine").WriteTo(&b, 0)
 	write("goroutine", b.Bytes())

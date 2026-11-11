@@ -1,23 +1,24 @@
-// Package rtprof writes delta heap, mutex and block profiles from the Go
-// runtime's public profiling API (runtime.MemProfile, runtime.MutexProfile,
-// runtime.BlockProfile) only, with no access to runtime internals.
+// Package rtprof writes delta heap, mutex and block profiles through the
+// public runtime/pprof API, with no go:linkname in this module.
 //
-// Each Profiler keeps the previous cumulative values per stack and writes
-// only the change since its last call, as an uncompressed pprof protobuf.
-// Symbolization (runtime.CallersFrames) is cached per PC and per stack for
-// the life of the Profiler, and every buffer is reused, so a steady-state
-// call allocates almost nothing.
+// Each Profile call writes runtime/pprof's cumulative profile
+// (pprof.Lookup(name).WriteTo(w, 0)), which carries everything the runtime
+// records: full-depth stacks (debug.profstackdepth, 128 by default), linker
+// symbol names including generic shapes, function start lines, inline
+// frames and the process mappings. It then subtracts the previous call's
+// values per stack and writes the change as an uncompressed pprof that
+// keeps runtime/pprof's locations, functions, mappings and strings
+// byte for byte.
 //
-// The location building (inline-frame grouping with a "deck", final inline
-// frame expansion, /proc/self/maps mappings) follows Go's runtime/pprof
-// (BSD-3-Clause, Copyright The Go Authors), rewritten on public APIs.
+// A stack is identified by the addresses of its locations (runtime/pprof
+// gives each location the PC of its leaf frame, which is stable for the
+// life of the process) plus, for the heap, the object size label. Nothing
+// is symbolized or decoded into strings here; the gzip reader and every
+// buffer are reused.
 //
-// Known differences from runtime/pprof and godeltaprof, all caused by the
-// public API:
-//   - Stacks are at most 32 entries deep (runtime.StackRecord.Stack0);
-//     runtime/pprof and godeltaprof see up to debug.profstackdepth (128).
-//     Records whose stacks agree in their first 32 entries are merged.
-//   - Function names are runtime.Frame.Function, so generic functions read
-//     F[...] rather than the linker's shape name F[go.shape.int].
-//   - Function.start_line is 0 (runtime.Frame does not export it).
+// Values follow godeltaprof, which otelprofile used before:
+//   - heap: alloc_objects and alloc_space are the window's deltas,
+//     inuse_* the current values; both scaled for sampling from the raw
+//     counts, which are recovered exactly from runtime/pprof's scaled ones;
+//   - mutex, block: contentions and delay since the previous call.
 package rtprof

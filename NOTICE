@@ -4,12 +4,10 @@ Copyright 2026 Akshat Agarwal
 This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
 internal/rtprof contains code adapted from the Go runtime/pprof package
-(BSD-3-Clause, Copyright The Go Authors): elf.go is copied, and the location
-building in symbols.go (inline-frame grouping, /proc/self/maps parsing) and
-scaleHeapSample in profiler.go follow runtime/pprof. elf.go and symbols.go
-keep the Go copyright header; scaleHeapSample is marked in place.
+(BSD-3-Clause, Copyright The Go Authors): scaleHeapSample in profiler.go
+follows runtime/pprof and is marked in place.
 
-The Go license, which those files call "the LICENSE file":
+The Go license:
 
     Copyright 2009 The Go Authors.
 

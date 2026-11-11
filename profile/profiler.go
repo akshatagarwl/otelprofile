@@ -35,9 +35,9 @@ type Profiler struct {
 	cpuBuf  *bytes.Buffer
 	cpuOn   bool
 	cpuErrd bool
-	heap    *rtprof.HeapProfiler
-	mutex   *rtprof.MutexProfiler
-	block   *rtprof.MutexProfiler
+	heap    *rtprof.Profiler
+	mutex   *rtprof.Profiler
+	block   *rtprof.Profiler
 	lastGC  uint32
 	enabled map[Type]bool
 	buf     bytes.Buffer // reused for every non-CPU profile write
@@ -107,16 +107,6 @@ func (p *Profiler) begin() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.start = time.Now()
-	var syms rtprof.Symbols
-	if p.enabled[TypeHeap] || p.enabled[TypeMutex] || p.enabled[TypeBlock] {
-		syms = rtprof.NewSymbols()
-	}
-	if p.enabled[TypeMutex] || p.enabled[TypeBlock] {
-		// Read the cycle rate (once per process) before raising the
-		// sampling rates: it walks the mutex profile, which is still
-		// small now unless the program set a fraction itself.
-		_, _ = rtprof.CyclesPerSecond()
-	}
 	if p.enabled[TypeMutex] {
 		prev := runtime.SetMutexProfileFraction(-1)
 		p.prevMutexFraction = prev
@@ -128,12 +118,8 @@ func (p *Profiler) begin() {
 			runtime.SetMutexProfileFraction(DefaultMutexProfileFraction)
 			p.setMutex = true
 		}
-		if m, err := rtprof.NewMutexProfiler(syms); err != nil {
-			p.handle(fmt.Errorf("mutex profile disabled: %w", err))
-		} else {
-			m.Profile() // discard the since-start profile
-			p.mutex = m
-		}
+		p.mutex = rtprof.NewMutex()
+		p.prime(p.mutex)
 	}
 	if p.enabled[TypeBlock] {
 		rate := p.cfg.blockRate
@@ -142,22 +128,25 @@ func (p *Profiler) begin() {
 		}
 		runtime.SetBlockProfileRate(rate)
 		p.setBlock = true
-		if b, err := rtprof.NewBlockProfiler(syms); err != nil {
-			p.handle(fmt.Errorf("block profile disabled: %w", err))
-		} else {
-			b.Profile() // discard the since-start profile
-			p.block = b
-		}
+		p.block = rtprof.NewBlock()
+		p.prime(p.block)
 	}
 	if p.enabled[TypeHeap] {
-		p.heap = rtprof.NewHeapProfiler(syms)
-		p.heap.Profile() // discard the since-start profile
+		p.heap = rtprof.NewHeap()
+		p.prime(p.heap)
 		p.lastGC = numGC()
 	}
 	if p.enabled[TypeCPU] {
 		p.cpuBuf = &bytes.Buffer{}
 		p.cpuTick = p.start
 		p.startCPU()
+	}
+}
+
+// prime discards a delta profiler's since-start profile.
+func (p *Profiler) prime(d *rtprof.Profiler) {
+	if _, err := d.Profile(); err != nil {
+		p.handle(err)
 	}
 }
 
@@ -267,11 +256,18 @@ func (p *Profiler) collect(restart, force bool) (recs []Record) {
 		}
 		buf.Reset()
 	}
+	delta := func(t Type, d *rtprof.Profiler) {
+		if b, err := d.Profile(); err != nil {
+			p.handle(err)
+		} else {
+			rec(t, bytes.Clone(b))
+		}
+	}
 	if p.mutex != nil {
-		rec(TypeMutex, bytes.Clone(p.mutex.Profile()))
+		delta(TypeMutex, p.mutex)
 	}
 	if p.block != nil {
-		rec(TypeBlock, bytes.Clone(p.block.Profile()))
+		delta(TypeBlock, p.block)
 	}
 	if p.heap != nil {
 		gc := numGC()
@@ -280,7 +276,7 @@ func (p *Profiler) collect(restart, force bool) (recs []Record) {
 			gc = numGC()
 		}
 		if gc != p.lastGC {
-			rec(TypeHeap, bytes.Clone(p.heap.Profile()))
+			delta(TypeHeap, p.heap)
 			p.lastGC = gc
 		}
 	}
