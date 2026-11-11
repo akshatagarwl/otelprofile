@@ -156,17 +156,18 @@ never fatal. Repeats of the same error within a minute are collapsed.
 | Type | What you get | Notes |
 |---|---|---|
 | `cpu` | `cpu` (nanoseconds) and `samples` | 100 Hz, one profile per `CPUWindow`. If another CPU profiler holds the runtime's profiler, the window is skipped and retried. |
-| `heap` | `alloc_objects`, `alloc_space` (deltas over the window), `inuse_objects`, `inuse_space` | from `runtime.MemProfile`; no `go:linkname`, see [docs/delta-without-linkname.md](docs/delta-without-linkname.md) |
+| `heap` | `alloc_objects`, `alloc_space` (deltas over the window), `inuse_objects`, `inuse_space` | from runtime/pprof's heap profile; no `go:linkname`, see [docs/delta-without-linkname.md](docs/delta-without-linkname.md) |
 | `goroutine` | `goroutines` | snapshot |
-| `mutex` | `mutex_count`, `mutex_duration` (deltas) | opt-in; sets the mutex profile fraction. From `runtime.MutexProfile` |
-| `block` | `block_count`, `block_duration` (deltas) | opt-in; sets the block profile rate. From `runtime.BlockProfile` |
+| `mutex` | `mutex_count`, `mutex_duration` (deltas) | opt-in; sets the mutex profile fraction. From runtime/pprof's mutex profile |
+| `block` | `block_count`, `block_duration` (deltas) | opt-in; sets the block profile rate. From runtime/pprof's block profile |
 
-Heap, mutex and block deltas use only the public runtime API. Its records
-keep at most 32 stack entries, so stacks deeper than that are cut at their
-32nd frame (runtime/pprof keeps 128). Generic functions are named `F[...]`,
-and functions carry no start line. Mutex and block cost more CPU per cycle than
-godeltaprof did (the public API symbolizes every record on each read);
-heap costs less. Numbers are in the doc.
+Heap, mutex and block deltas are computed from runtime/pprof's own
+profiles (`pprof.Lookup(name).WriteTo`), so they carry everything
+`go tool pprof` shows: full-depth stacks, generic shape names, start lines,
+inline frames and mappings. They cost 3–9× the CPU per cycle that godeltaprof
+did (a few milliseconds per type per cycle in the benchmark), because
+runtime/pprof symbolizes and compresses the whole cumulative profile on
+every read; numbers are in the doc.
 
 ## Dynamic labels
 
