@@ -134,7 +134,7 @@ func (e *Exporter) encode(res *resource.Resource, scope instrumentation.Scope, r
 	}
 	ins := make([]transform.Input, len(recs))
 	for i, r := range recs {
-		ins[i] = transform.Input{Name: r.Type.String(), Start: r.Start, Duration: r.Duration, Pprof: r.Pprof, Cumulative: r.Cumulative, Baseline: r.Baseline}
+		ins[i] = transform.Input{Name: r.Type.String(), Start: r.Start, Duration: r.Duration, Pprof: r.Pprof}
 	}
 	var errs []error
 	var build func(ins []transform.Input)
@@ -144,20 +144,17 @@ func (e *Exporter) encode(res *resource.Resource, scope instrumentation.Scope, r
 			errs = append(errs, err)
 		}
 		if n == 0 {
-			e.enc.CommitDeltas()
 			return
 		}
 		if len(body) <= e.cfg.maxBytes {
 			emit(body)
-			e.enc.CommitDeltas()
 			return
 		}
 		if len(ins) == 1 {
-			e.enc.CommitDeltas()
 			errs = append(errs, fmt.Errorf("dropped %s profile: %d bytes exceeds the %d-byte request cap", ins[0].Name, len(body), e.cfg.maxBytes))
 			return
 		}
-		// Split and re-encode; this encoding's delta state is discarded.
+		// Split and re-encode.
 		build(ins[:len(ins)/2])
 		build(ins[len(ins)/2:])
 	}

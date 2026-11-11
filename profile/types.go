@@ -99,21 +99,15 @@ func ParseTypes(s string) ([]Type, error) {
 	return out, nil
 }
 
-// Record is one collected runtime profile, pprof-encoded (optionally
-// gzipped) as runtime/pprof or godeltaprof writes it. Cumulative types are
-// already deltas over [Start, Start+Duration).
+// Record is one collected runtime profile, pprof-encoded. CPU and goroutine
+// profiles are runtime/pprof's (gzipped); heap, mutex and block profiles
+// are uncompressed and already deltas over [Start, Start+Duration) for
+// alloc_objects, alloc_space, contentions and delay.
 type Record struct {
 	Type     Type
 	Start    time.Time
 	Duration time.Duration
 	Pprof    []byte
-	// Cumulative is set by WithRuntimeDeltas: Pprof is the runtime's
-	// cumulative profile (totals since process start for alloc_*,
-	// contentions and delay) and the exporter computes the window's deltas
-	// against the previous record of the same Type. Baseline marks the first
-	// such record, which only seeds that state.
-	Cumulative bool
-	Baseline   bool
 }
 
 // Exporter sends records somewhere. Export is called from the Profiler's own

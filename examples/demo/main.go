@@ -54,7 +54,6 @@ var (
 	phase    = flag.Duration("phase", 2*time.Minute, "alternate mode: length of each profiler's turn")
 	cpuWin   = flag.Duration("cpu-window", 0, "otelprofile CPU window (0 = interval)")
 	dumpDir  = flag.String("dump", "", "also write every raw profile record to this directory (otel mode)")
-	rtDeltas = flag.Bool("runtime-deltas", false, "otelprofile: heap/mutex/block deltas from runtime/pprof instead of godeltaprof")
 	memRate  = flag.Int("memprofilerate", 0, "set runtime.MemProfileRate before the workload starts (0 = Go default, 512 KiB)")
 	statsF   = flag.Duration("stats", 0, "print resource usage as JSON every interval and at exit (0 = only at exit)")
 	arrivals = flag.String("arrivals", "ticker", "request timing: ticker (every 1/rps) | poisson (random gaps, mean 1/rps)")
