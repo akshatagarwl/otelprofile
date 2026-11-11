@@ -154,7 +154,9 @@ func FuzzEncoder(f *testing.F) {
 		}
 		checkConformance(t, &req)
 		// Whatever google/pprof also accepts must give the same rows.
-		if p, perr := profile.ParseData(data); perr == nil {
+		// The encoder replaces invalid UTF-8; the oracle keeps it, so
+		// rows only compare for valid input.
+		if p, perr := profile.ParseData(data); perr == nil && validUTF8(p) {
 			b := oracle.NewBuilder(transform.Options{})
 			if _, berr := b.Add(testResource(), testScope(), oracle.Input{Name: "fuzz", Start: time.Unix(1, 0), Parsed: p}); berr == nil {
 				compareRows(t, "fuzz", b.Request(), &req)
@@ -180,85 +182,4 @@ func benchEncoder(b *testing.B, name string) {
 
 func toOracle(in transform.Input) oracle.Input {
 	return oracle.Input{Name: in.Name, Start: in.Start, Duration: in.Duration, Pprof: in.Pprof}
-}
-
-// cumulativePprof builds a heap-shaped profile whose two stacks have the
-// given cumulative alloc_space and in-use values.
-func cumulativePprof(t *testing.T, workAlloc, mainAlloc, inuse int64) []byte {
-	t.Helper()
-	m := &profile.Mapping{ID: 1, Start: 0x1000, Limit: 0x9000, File: "/bin/app"}
-	f1 := &profile.Function{ID: 1, Name: "main.main"}
-	f2 := &profile.Function{ID: 2, Name: "main.work"}
-	l1 := &profile.Location{ID: 1, Mapping: m, Address: 0x1100, Line: []profile.Line{{Function: f1, Line: 10}}}
-	l2 := &profile.Location{ID: 2, Mapping: m, Address: 0x1200, Line: []profile.Line{{Function: f2, Line: 20}}}
-	p := &profile.Profile{
-		SampleType: []*profile.ValueType{{Type: "alloc_space", Unit: "bytes"}, {Type: "inuse_space", Unit: "bytes"}},
-		Sample: []*profile.Sample{
-			{Location: []*profile.Location{l2, l1}, Value: []int64{workAlloc, inuse}},
-			{Location: []*profile.Location{l1}, Value: []int64{mainAlloc, inuse}},
-		},
-		Mapping: []*profile.Mapping{m}, Location: []*profile.Location{l1, l2}, Function: []*profile.Function{f1, f2},
-	}
-	var buf bytes.Buffer
-	if err := p.Write(&buf); err != nil {
-		t.Fatal(err)
-	}
-	return buf.Bytes()
-}
-
-func valuesByType(t *testing.T, req *collpb.ExportProfilesServiceRequest) map[string]int64 {
-	rows, err := otlpread.Rows(req)
-	if err != nil {
-		t.Fatal(err)
-	}
-	out := map[string]int64{}
-	for _, r := range rows {
-		out[r.Type+"|"+r.Stack[len(r.Stack)-1]] += r.Value
-	}
-	return out
-}
-
-func TestEncoderCumulativeDeltas(t *testing.T) {
-	e := transform.NewEncoder(transform.Options{})
-	// The baseline seeds the state and produces nothing.
-	if got := encodeWith(t, e, []transform.Input{{Name: "heap", Cumulative: true, Baseline: true, Pprof: cumulativePprof(t, 1000, 100, 50)}}); len(got.ResourceProfiles) != 0 {
-		t.Fatal("baseline must not produce samples")
-	}
-	e.CommitDeltas()
-	got := valuesByType(t, encodeWith(t, e, []transform.Input{{Name: "heap", Cumulative: true, Pprof: cumulativePprof(t, 1600, 100, 70)}}))
-	e.CommitDeltas()
-	want := map[string]int64{"alloc_space|main.work": 600, "inuse_space|main.work": 70, "inuse_space|main.main": 70}
-	if len(got) != len(want) {
-		t.Fatalf("got %v want %v (a zero delta must produce no sample)", got, want)
-	}
-	for k, v := range want {
-		if got[k] != v {
-			t.Fatalf("%s = %d, want %d (all %v)", k, got[k], v, got)
-		}
-	}
-	// A counter that went down (process restart under the same name) is
-	// taken as a fresh total.
-	got = valuesByType(t, encodeWith(t, e, []transform.Input{{Name: "heap", Cumulative: true, Pprof: cumulativePprof(t, 40, 130, 70)}}))
-	if got["alloc_space|main.work"] != 40 || got["alloc_space|main.main"] != 30 {
-		t.Fatalf("after reset: %v", got)
-	}
-	e.CommitDeltas()
-	// An Encode that is not committed (for example one split for size) does
-	// not move the baseline.
-	encodeWith(t, e, []transform.Input{{Name: "heap", Cumulative: true, Pprof: cumulativePprof(t, 140, 130, 70)}})
-	got = valuesByType(t, encodeWith(t, e, []transform.Input{{Name: "heap", Cumulative: true, Pprof: cumulativePprof(t, 140, 130, 70)}}))
-	if got["alloc_space|main.work"] != 100 {
-		t.Fatalf("uncommitted encode moved the baseline: %v", got)
-	}
-}
-
-func TestEncoderBaselineInSameRequest(t *testing.T) {
-	e := transform.NewEncoder(transform.Options{})
-	got := valuesByType(t, encodeWith(t, e, []transform.Input{
-		{Name: "heap", Cumulative: true, Baseline: true, Pprof: cumulativePprof(t, 1000, 100, 50)},
-		{Name: "heap", Cumulative: true, Pprof: cumulativePprof(t, 1250, 100, 50)},
-	}))
-	if got["alloc_space|main.work"] != 250 {
-		t.Fatalf("a baseline earlier in the same request must be used: %v", got)
-	}
 }

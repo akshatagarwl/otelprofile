@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/grafana/pyroscope-go/godeltaprof"
+	"github.com/akshatagarwl/otelprofile-go/internal/rtprof"
 )
 
 var regenerate = flag.Bool("regenerate", false, "re-record the pprof input fixtures from the live runtime")
@@ -58,12 +58,12 @@ func TestRecordFixtures(t *testing.T) {
 	runtime.SetBlockProfileRate(1)
 	defer runtime.SetMutexProfileFraction(0)
 	defer runtime.SetBlockProfileRate(0)
-	heap := godeltaprof.NewHeapProfiler()
-	mutex := godeltaprof.NewMutexProfiler()
-	block := godeltaprof.NewBlockProfiler()
-	_ = heap.Profile(&bytes.Buffer{})
-	_ = mutex.Profile(&bytes.Buffer{})
-	_ = block.Profile(&bytes.Buffer{})
+	heap, mutex, block := rtprof.NewHeap(), rtprof.NewMutex(), rtprof.NewBlock()
+	for _, d := range []*rtprof.Profiler{heap, mutex, block} {
+		if _, err := d.Profile(); err != nil {
+			t.Fatal(err)
+		}
+	}
 
 	var cpu bytes.Buffer
 	if err := pprof.StartCPUProfile(&cpu); err != nil {
@@ -125,16 +125,14 @@ func TestRecordFixtures(t *testing.T) {
 	write("cpu", cpu.Bytes())
 	runtime.GC()
 
+	for name, d := range map[string]*rtprof.Profiler{"heap": heap, "mutex": mutex, "block": block} {
+		b, err := d.Profile()
+		if err != nil {
+			t.Fatal(err)
+		}
+		write(name, b)
+	}
 	var b bytes.Buffer
-	_ = heap.Profile(&b)
-	write("heap", b.Bytes())
-	b.Reset()
-	_ = mutex.Profile(&b)
-	write("mutex", b.Bytes())
-	b.Reset()
-	_ = block.Profile(&b)
-	write("block", b.Bytes())
-	b.Reset()
 	_ = pprof.Lookup("goroutine").WriteTo(&b, 0)
 	write("goroutine", b.Bytes())
 	close(stop)
