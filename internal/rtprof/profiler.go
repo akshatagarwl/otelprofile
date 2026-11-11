@@ -242,7 +242,8 @@ func (p *HeapProfiler) heapLocs(e *entry) []uint64 {
 	return e.locs
 }
 
-// scaleHeapSample is runtime/pprof's: it adjusts a heap sample for its
+// scaleHeapSample is runtime/pprof's (Copyright 2016 The Go Authors, under
+// the BSD-style license in NOTICE): it adjusts a heap sample for its
 // probability of being sampled, 1-exp(-avgSize/rate).
 func scaleHeapSample(count, size, rate int64) (int64, int64) {
 	if count == 0 || size == 0 {

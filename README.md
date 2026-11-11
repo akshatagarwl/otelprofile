@@ -141,7 +141,6 @@ Explicit fields win over the environment.
 | `Interval` | `OTEL_GO_X_PROFILES_INTERVAL` (`15s`) | 15s |
 | `CPUWindow` (length of each CPU profile) | `OTEL_GO_X_PROFILES_CPU_WINDOW` | 2 × `Interval` (30s). Each CPU profiler restart costs the Go runtime ~2 MB, so CPU profiles cover two intervals. Set it to `Interval` for 15s CPU resolution. |
 | `MutexProfileFraction`, `BlockProfileRate` | none | 5 and 10µs, only when the type is enabled; restored on `Stop` |
-| `RuntimeDeltas` (experimental) | `OTEL_GO_X_PROFILES_RUNTIME_DELTAS=true` | false. Compute heap, mutex and block deltas from runtime/pprof's public API instead of godeltaprof (which uses `go:linkname`); same data, see `docs/delta-without-linkname.md` for the cost. |
 | `DisableGCRuns` | none | false (a GC runs before a heap collection if none ran in the window, so in-use figures stay current) |
 | — | `OTEL_EXPORTER_OTLP_[PROFILES_]TIMEOUT`, `_COMPRESSION` (`gzip` or `none`), `_CERTIFICATE`, `_CLIENT_CERTIFICATE`, `_CLIENT_KEY` | 10s, none (the OTLP default) |
 | — | `OTEL_SDK_DISABLED=true` turns `Start` into a no-op | |
@@ -157,10 +156,17 @@ never fatal. Repeats of the same error within a minute are collapsed.
 | Type | What you get | Notes |
 |---|---|---|
 | `cpu` | `cpu` (nanoseconds) and `samples` | 100 Hz, one profile per `CPUWindow`. If another CPU profiler holds the runtime's profiler, the window is skipped and retried. |
-| `heap` | `alloc_objects`, `alloc_space` (deltas over the window), `inuse_objects`, `inuse_space` | via godeltaprof |
+| `heap` | `alloc_objects`, `alloc_space` (deltas over the window), `inuse_objects`, `inuse_space` | from `runtime.MemProfile`; no `go:linkname`, see [docs/delta-without-linkname.md](docs/delta-without-linkname.md) |
 | `goroutine` | `goroutines` | snapshot |
-| `mutex` | `mutex_count`, `mutex_duration` (deltas) | opt-in; sets the mutex profile fraction |
-| `block` | `block_count`, `block_duration` (deltas) | opt-in; sets the block profile rate |
+| `mutex` | `mutex_count`, `mutex_duration` (deltas) | opt-in; sets the mutex profile fraction. From `runtime.MutexProfile` |
+| `block` | `block_count`, `block_duration` (deltas) | opt-in; sets the block profile rate. From `runtime.BlockProfile` |
+
+Heap, mutex and block deltas use only the public runtime API. Its records
+keep at most 32 stack entries, so stacks deeper than that are cut at their
+32nd frame (runtime/pprof keeps 128). Generic functions are named `F[...]`,
+and functions carry no start line. Mutex and block cost more CPU per cycle than
+godeltaprof did (the public API symbolizes every record on each read);
+heap costs less. Numbers are in the doc.
 
 ## Dynamic labels
 

@@ -3,10 +3,43 @@ Copyright 2026 Akshat Agarwal
 
 This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
+internal/rtprof contains code adapted from the Go runtime/pprof package
+(BSD-3-Clause, Copyright The Go Authors): elf.go is copied, and the location
+building in symbols.go (inline-frame grouping, /proc/self/maps parsing) and
+scaleHeapSample in profiler.go follow runtime/pprof. elf.go and symbols.go
+keep the Go copyright header; scaleHeapSample is marked in place.
+
+The Go license, which those files call "the LICENSE file":
+
+    Copyright 2009 The Go Authors.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+       * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following disclaimer
+    in the documentation and/or other materials provided with the
+    distribution.
+       * Neither the name of Google LLC nor the names of its
+    contributors may be used to endorse or promote products derived from
+    this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 It depends on, and does not copy code from:
-- github.com/grafana/pyroscope-go/godeltaprof (Apache-2.0; contains files
-  derived from the Go runtime/pprof package, BSD-3-Clause, Copyright The Go
-  Authors) for delta heap, mutex and block profiles.
 - go.opentelemetry.io/otel and go.opentelemetry.io/otel/sdk (Apache-2.0).
 - github.com/klauspost/compress (BSD-3-Clause / Apache-2.0 / MIT parts).
 - google.golang.org/protobuf (BSD-3-Clause), protowire only.
@@ -17,4 +50,6 @@ and the span-label idea follows github.com/grafana/otel-profiling-go
 github.com/google/pprof (Apache-2.0), the generated OTLP protos
 (Apache-2.0) and github.com/open-telemetry/sig-profiling/profcheck
 (Apache-2.0); the benchmark demo links github.com/grafana/pyroscope-go
-(Apache-2.0) for comparison.
+(Apache-2.0) and the separate test/godeltaprof module links
+github.com/grafana/pyroscope-go/godeltaprof (Apache-2.0), both for
+comparison only.
