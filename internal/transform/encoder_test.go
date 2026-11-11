@@ -154,7 +154,9 @@ func FuzzEncoder(f *testing.F) {
 		}
 		checkConformance(t, &req)
 		// Whatever google/pprof also accepts must give the same rows.
-		if p, perr := profile.ParseData(data); perr == nil {
+		// The encoder replaces invalid UTF-8; the oracle keeps it, so
+		// rows only compare for valid input.
+		if p, perr := profile.ParseData(data); perr == nil && validUTF8(p) {
 			b := oracle.NewBuilder(transform.Options{})
 			if _, berr := b.Add(testResource(), testScope(), oracle.Input{Name: "fuzz", Start: time.Unix(1, 0), Parsed: p}); berr == nil {
 				compareRows(t, "fuzz", b.Request(), &req)

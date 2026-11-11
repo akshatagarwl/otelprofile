@@ -6,7 +6,9 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"google.golang.org/protobuf/encoding/protowire"
 )
@@ -156,11 +158,19 @@ func NewEncoder(opts Options) *Encoder {
 // outgrows the bound.
 const maxInterned = 2048
 
+// internBytes returns b as an interned string. OTLP strings must be UTF-8
+// (a receiver rejects the whole request otherwise), so invalid sequences,
+// which only user-supplied pprof labels or a damaged input can carry, are
+// replaced with U+FFFD. The check runs once per new string.
 func (e *Encoder) internBytes(b []byte) string {
 	if s, ok := e.intern[string(b)]; ok {
 		return s
 	}
 	s := string(b)
+	if !utf8.ValidString(s) {
+		e.intern[s] = strings.ToValidUTF8(s, "\uFFFD")
+		return e.intern[s]
+	}
 	e.intern[s] = s
 	return s
 }
