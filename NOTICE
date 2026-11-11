@@ -50,6 +50,4 @@ and the span-label idea follows github.com/grafana/otel-profiling-go
 github.com/google/pprof (Apache-2.0), the generated OTLP protos
 (Apache-2.0) and github.com/open-telemetry/sig-profiling/profcheck
 (Apache-2.0); the benchmark demo links github.com/grafana/pyroscope-go
-(Apache-2.0) and the separate test/godeltaprof module links
-github.com/grafana/pyroscope-go/godeltaprof (Apache-2.0), both for
-comparison only.
+(Apache-2.0) for comparison.
