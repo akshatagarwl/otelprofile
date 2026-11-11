@@ -104,6 +104,16 @@ func allocWork(n int) {
 	sinkMu.Unlock()
 }
 
+// allocPaths allocates once at the first n shallow paths.
+func allocPaths(n int) {
+	for p := 0; p < n; p++ {
+		walk(treeDepth, p, leafAlloc)
+	}
+	sinkMu.Lock()
+	allocSink = nil
+	sinkMu.Unlock()
+}
+
 // contendWork makes mutex contention and channel blocking on paths.
 func contendWork(paths int) {
 	var wg sync.WaitGroup
