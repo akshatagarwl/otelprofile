@@ -27,10 +27,17 @@ jobs:
           cache-dependency-path: |
             go.sum
             examples/demo/go.sum
+            test/godeltaprof/go.sum
       - name: vet
         run: go vet ./...
       - name: test (race)
         run: go test -race -count=1 ./...
+      - name: same data as godeltaprof, field for field
+        working-directory: test/godeltaprof
+        run: |
+          set -o pipefail
+          go vet ./...
+          go test -race -count=3 -run TestEquivalence -v ./... | grep -E '^(---|ok|FAIL|PASS)|deepest|differ \(of|mappings not'
       - name: demo builds (all variants)
         working-directory: examples/demo
         run: |
